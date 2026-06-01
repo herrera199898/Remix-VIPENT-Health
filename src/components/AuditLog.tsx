@@ -627,7 +627,7 @@ export default function AuditLog() {
           {/* 6. TABLA PRINCIPAL (ESCRITORIO & TABLET) */}
           <div className="flex-1 overflow-auto no-scrollbar">
             
-            {/* Escritorio y Tablet: Max 7 columnas */}
+            {/* Escritorio y Tablet: Max 8 columnas */}
             <table className="w-full border-collapse hidden sm:table">
               <thead className="sticky top-0 bg-gray-50 border-b border-gray-250 z-10">
                 <tr>
@@ -640,32 +640,35 @@ export default function AuditLog() {
                       <ArrowUpDown size={11} className="text-gray-400" />
                     </button>
                   </th>
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-52">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-44">
                     Usuario
                   </th>
                   {/* Oculto en tablet (md) para mantener la tabla equilibrada */}
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-52 hidden lg:table-cell">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-48 hidden lg:table-cell">
                     Perfil / Establecimiento
                   </th>
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-28">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-24">
                     Módulo
                   </th>
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-32">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-28">
                     Acción
                   </th>
                   {/* Oculto en tablet (md) */}
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-44 hidden lg:table-cell">
                     Recurso Afectado
                   </th>
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-48">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-28">
                     Resultado
+                  </th>
+                  <th className="text-center px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-24">
+                    Acciones
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {paginatedEvents.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-400">
+                    <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-400">
                       No se encontraron registros que coincidan con los filtros seleccionados.
                     </td>
                   </tr>
@@ -718,23 +721,24 @@ export default function AuditLog() {
                           {entry.resourceLabel}
                         </td>
                         
-                        {/* 7. Resultado + Detalle */}
+                        {/* 7. Resultado */}
                         <td className="px-5 py-3.5">
-                          <div className="flex items-center justify-between gap-1.5 font-sans">
-                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold ${resultStyle.bg} ${resultStyle.text} ${resultStyle.border}`}>
-                              {resultStyle.icon}
-                              <span>{resultStyle.label}</span>
-                            </div>
-                            
-                            <button
-                              onClick={() => setSelectedEvent(entry)}
-                              className="inline-flex items-center gap-1 px-2 py-1 border border-slate-200 rounded hover:bg-slate-100 active:bg-slate-200 text-[10px] text-slate-700 font-semibold transition-all cursor-pointer shadow-xs"
-                              title="Ver detalle del evento"
-                            >
-                              <Eye size={12} className="text-slate-500" />
-                              <span>Detalle</span>
-                            </button>
+                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold ${resultStyle.bg} ${resultStyle.text} ${resultStyle.border} font-sans`}>
+                            {resultStyle.icon}
+                            <span>{resultStyle.label}</span>
                           </div>
+                        </td>
+
+                        {/* 8. Acciones */}
+                        <td className="px-5 py-3.5 text-center">
+                          <button
+                            onClick={() => setSelectedEvent(entry)}
+                            className="inline-flex items-center gap-1 px-2 py-1 border border-slate-200 rounded hover:bg-slate-100 active:bg-slate-200 text-[10px] text-slate-700 font-semibold transition-all cursor-pointer shadow-xs font-sans"
+                            title="Ver detalle del evento"
+                          >
+                            <Eye size={12} className="text-slate-500" />
+                            <span>Detalle</span>
+                          </button>
                         </td>
                       </tr>
                     );
