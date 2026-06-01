@@ -188,13 +188,13 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
       return { label: 'Requiere rescate', color: 'bg-rose-50 text-rose-700 border-rose-200' };
     }
     if (p.nextAppointmentDate === 'Sin cita') {
-      return { label: 'Sin próxima cita', color: 'bg-amber-50 text-amber-800 border-amber-200' };
+      return { label: 'Sin próxima cita', color: 'bg-amber-50 text-amber-700 border-amber-200' };
     }
     if (p.alerts?.some(a => a.toLowerCase().includes('vencido'))) {
-      return { label: 'Requiere revisión', color: 'bg-orange-50 text-orange-700 border-orange-200' };
+      return { label: 'Requiere revisión', color: 'bg-amber-50 text-amber-700 border-amber-200' };
     }
     if (p.pendingExams && p.pendingExams.length > 0) {
-      return { label: 'Examen pendiente', color: 'bg-blue-50 text-blue-700 border-blue-200' };
+      return { label: 'Examen pendiente', color: 'bg-sky-50 text-sky-700 border-sky-200' };
     }
     return { label: 'Normal', color: 'bg-slate-50 text-slate-600 border-slate-200' };
   };
@@ -641,24 +641,24 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
           {/* Table Container */}
           <div className="flex-1 overflow-auto hidden md:block">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-[#f8fafc] sticky top-0 z-10 border-b border-gray-200">
+              <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
                 <tr>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[24%]">
+                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[24%]">
                     Paciente / RUT
                   </th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">
+                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[14%]">
                     Estado PSCV
                   </th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">
+                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[14%]">
                     Riesgo Cardiovascular
                   </th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[18%]">
+                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[18%]">
                     Compensación
                   </th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[18%]">
+                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[18%]">
                     Prioridad
                   </th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[12%] pr-6">
+                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center w-[12%] pr-6">
                     Acciones
                   </th>
                 </tr>
@@ -673,61 +673,61 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                 return (
                   <tr 
                     key={patient.id}
-                    className={`hover:bg-slate-50/75 transition-colors group ${
+                    className={`hover:bg-slate-50/70 transition-colors group ${
                       isHighlighted ? 'bg-brand-blue/5 border-l-4 border-l-brand-blue font-semibold' : ''
                     }`}
                   >
                     {/* Col 1: Paciente */}
-                    <td className="py-3 px-4">
-                      <div className="font-bold text-gray-900 group-hover:text-brand-blue transition-colors text-sm">{formatShortName(patient.name)}</div>
-                      <div className="text-[10px] text-gray-400 font-bold mt-1">RUT: {patient.rut}</div>
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                      <div className="font-bold text-slate-900 group-hover:text-brand-blue transition-colors text-sm">{formatShortName(patient.name)}</div>
+                      <div className="text-[10px] text-slate-400 font-bold mt-1">RUT: {patient.rut}</div>
                     </td>
 
                     {/* Col 2: Estado */}
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${
                         pscvState === 'Activo' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
-                        'bg-slate-100 text-slate-700 border-slate-200'
+                        'bg-slate-50 text-slate-600 border-slate-200'
                       }`}>
                         {pscvState}
                       </span>
                     </td>
 
                     {/* Col 3: Riesgo */}
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-bold uppercase tracking-wider ${
-                        patient.risk === 'Alto' ? 'border-red-200 text-red-655 bg-red-50/50' : 
-                        patient.risk === 'Moderado' ? 'border-orange-200 text-orange-655 bg-orange-50/50' : 
-                        'border-blue-200 text-blue-655 bg-blue-50/50'
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${
+                        patient.risk === 'Alto' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
+                        patient.risk === 'Moderado' ? 'bg-amber-50 text-amber-700 border-amber-200' : 
+                        'bg-sky-50 text-sky-700 border-sky-200'
                       }`}>
                         {patient.risk}
                       </span>
                     </td>
 
                     {/* Col 4: Compensación (hta / dm2) */}
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                        compSummary.tone === 'success' ? 'bg-emerald-50 text-emerald-750 border-emerald-250' :
-                        compSummary.tone === 'danger' ? 'bg-red-50 text-red-750 border-red-250' :
-                        'bg-slate-100 text-slate-705 border-slate-200'
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${
+                        compSummary.tone === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                        compSummary.tone === 'danger' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                        'bg-slate-50 text-slate-600 border-slate-200'
                       }`}>
                         {compSummary.label}
                       </span>
                     </td>
 
                     {/* Col 5: Prioridad */}
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wide border ${priority.color}`}>
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${priority.color}`}>
                         {priority.label}
                       </span>
                     </td>
 
                     {/* Col 6: Acción (Menú de tres puntos únicamente) */}
-                    <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-end relative">
+                    <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-center relative">
                         <button
                           onClick={() => setActiveDropdownPatientId(activeDropdownPatientId === patient.id ? null : patient.id)}
-                          className="p-1 px-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer shrink-0 animate-pulse"
+                          className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                         >
                           <BulletListSvgIcon size={15} />
                         </button>
@@ -741,13 +741,13 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                                 setActiveDropdownPatientId(null);
                               }} 
                             />
-                            <div className="absolute right-0 top-full mt-1.5 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 text-left font-bold text-xs text-gray-700">
+                            <div className="absolute right-0 top-full mt-1.5 w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 text-left text-xs text-gray-700">
                               <button 
                                 onClick={() => {
                                   setActiveDropdownPatientId(null);
                                   setDrawerPatient(patient);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-bold"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
                                 <Eye size={13} className="text-brand-blue" />
                                 Previsualizar resumen PSCV
@@ -757,7 +757,7 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                                   setActiveDropdownPatientId(null);
                                   onViewDetails(patient);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-bold"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
                                 <User size={13} className="text-emerald-600" />
                                 Ver ficha completa
@@ -767,7 +767,7 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                                   setActiveDropdownPatientId(null);
                                   alert(`Generando y exportando Ficha Clínica de ${patient.name}...\nCumple con Ley 19.628 de Protección de Datos de Carácter Personal.`);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-bold"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
                                 <FileText size={13} className="text-amber-500" />
                                 Exportar ficha clínica
@@ -782,7 +782,7 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
               })}
               {paginatedPatients.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-gray-400 font-bold text-xs italic">
+                  <td colSpan={6} className="py-12 text-center text-slate-400 font-bold text-xs italic">
                     No se encontraron pacientes para los filtros seleccionados.
                   </td>
                 </tr>
@@ -875,60 +875,46 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
         </div>
 
         {/* Master Paginator */}
-        <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between bg-white text-xs select-none gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 font-bold">Páginas:</span>
+        <div className="p-4 border-t border-gray-200 bg-gray-50/50 flex items-center justify-between select-none">
+          <div className="flex items-center gap-2 text-xs text-slate-600 font-semibold font-sans">
+            <span>Mostrar</span>
             <select 
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-white border border-gray-200 rounded p-1 text-xs font-bold cursor-pointer"
+              className="bg-white border border-gray-300 rounded-md p-1 px-1.5 text-xs font-semibold cursor-pointer outline-none focus:ring-1 focus:ring-brand-blue"
             >
-              <option value={5}>5 por página</option>
-              <option value={10}>10 por página</option>
-              <option value={25}>25 por página</option>
-              <option value={50}>50 por página</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
             </select>
-            <span className="text-gray-450 ml-1">
-              Mostrando {totalPatients > 0 ? (currentPage - 1) * pageSize + 1 : 0} a {Math.min(currentPage * pageSize, totalPatients)} de {totalPatients}
+            <span>por página</span>
+            <span className="text-gray-300 mx-1.5">|</span>
+            <span>
+              Mostrando {totalPatients > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, totalPatients)} de {totalPatients} registros
             </span>
           </div>
 
-          <div className="flex items-center gap-1">
-            <button 
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(1)}
-              className="px-2.5 py-1 border border-gray-200 rounded text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
-            >
-              Inicio
-            </button>
+          <div className="flex items-center gap-2 font-sans text-xs">
             <button 
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              className="p-1 border border-gray-200 rounded text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
+              className="p-1.5 px-3 border border-gray-300 rounded-md text-xs disabled:opacity-30 disabled:cursor-not-allowed bg-white hover:bg-gray-50 transition-all font-semibold cursor-pointer shadow-sm"
             >
-              <ChevronLeft size={14} />
+              Anterior
             </button>
-            
-            <span className="px-3 py-1 bg-brand-blue text-white rounded text-xs font-black shadow-2xs">
-              {currentPage} de {totalPages}
+            <span className="text-slate-600 font-semibold text-xs px-1">
+              Pág. {currentPage} de {totalPages}
             </span>
-
             <button 
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              className="p-1 border border-gray-200 rounded text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
+              className="p-1.5 px-3 border border-gray-300 rounded-md text-xs disabled:opacity-30 disabled:cursor-not-allowed bg-white hover:bg-gray-50 transition-all font-semibold cursor-pointer shadow-sm"
             >
-              <ChevronRight size={14} />
-            </button>
-            <button 
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(totalPages)}
-              className="px-2.5 py-1 border border-gray-200 rounded text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
-            >
-              Final
+              Siguiente
             </button>
           </div>
         </div>

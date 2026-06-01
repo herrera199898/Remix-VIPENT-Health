@@ -66,21 +66,18 @@ export default function DailyAppointmentList({
     const norm = status.trim().toUpperCase();
     switch (norm) {
       case 'PENDIENTE':
-        return 'bg-amber-50 text-amber-700 border border-amber-200';
-      case 'PROGRAMADA':
-        return 'bg-[#eff6ff] text-blue-750 text-blue-700 border border-blue-100';
-      case 'CONFIRMADA':
-        return 'bg-sky-50 text-sky-800 border border-sky-100';
-      case 'REALIZADA':
-        return 'bg-[#ecfdf5] text-emerald-800 border border-[#a7f3d0]';
-      case 'CANCELADA':
-        return 'bg-[#fef2f2] text-rose-700 border border-rose-150';
       case 'REPROGRAMADA':
-        return 'bg-[#faf5ff] text-purple-700 border border-purple-150';
+        return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'PROGRAMADA':
+        return 'bg-sky-50 text-sky-700 border-sky-200';
+      case 'CONFIRMADA':
+      case 'REALIZADA':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'CANCELADA':
       case 'INASISTENCIA':
-        return 'bg-rose-50 text-rose-800 border border-rose-250';
+        return 'bg-rose-50 text-rose-700 border-rose-200';
       default:
-        return 'bg-slate-50 text-slate-600 border border-slate-200';
+        return 'bg-slate-50 text-slate-600 border-slate-200';
     }
   };
 
@@ -261,21 +258,20 @@ export default function DailyAppointmentList({
               </select>
               <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-400 pointer-events-none" />
             </div>
-
           </div>
 
-          {/* Table Container */}
+                    {/* Table Container */}
           <div className="flex-1 overflow-auto">
             <table className="w-full text-left border-collapse table-fixed">
-              <thead className="bg-[#f8fafc] sticky top-0 z-10 border-b border-gray-200">
+              <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
                 <tr>
-                  <th className="py-3 px-6 w-[100px] text-xs font-bold text-slate-500 uppercase tracking-wider">Hora</th>
-                  <th className="py-3 px-4 w-[240px] text-xs font-bold text-slate-500 uppercase tracking-wider">Paciente</th>
-                  <th className="py-3 px-4 w-[160px] text-xs font-bold text-slate-500 uppercase tracking-wider">Atención PSCV</th>
-                  <th className="py-3 px-4 w-[120px] text-xs font-bold text-slate-500 uppercase tracking-wider">Sede</th>
-                  <th className="py-3 px-4 w-[180px] text-xs font-bold text-slate-500 uppercase tracking-wider">Profesional</th>
-                  <th className="py-3 px-4 w-[130px] text-xs font-bold text-slate-500 uppercase tracking-wider">Estado</th>
-                  <th className="py-3 px-6 w-[100px] text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Acciones</th>
+                  <th className="py-3 px-4 w-[100px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Hora</th>
+                  <th className="py-3 px-4 w-[240px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Paciente</th>
+                  <th className="py-3 px-4 w-[160px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Atención PSCV</th>
+                  <th className="py-3 px-4 w-[120px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Sede</th>
+                  <th className="py-3 px-4 w-[180px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Profesional</th>
+                  <th className="py-3 px-4 w-[130px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Estado</th>
+                  <th className="py-3 px-4 w-[100px] text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -287,42 +283,42 @@ export default function DailyAppointmentList({
               </tr>
             ) : (
               filteredAppointments.map((app) => (
-                <tr key={app.id} className="hover:bg-slate-50/30 transition-colors">
+                <tr key={app.id} className="hover:bg-slate-50/70 transition-colors">
                   
                   {/* Hora */}
-                  <td className="py-4.5 px-6 font-mono font-bold text-xs text-slate-700">
+                  <td className="py-3.5 px-4 text-xs font-mono font-bold text-slate-700">
                     {app.time.replace(' AM', '').replace(' PM', '')}
                   </td>
                   
                   {/* Paciente Info */}
-                  <td className="py-4.5 px-4">
+                  <td className="py-3.5 px-4 text-xs text-slate-700">
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-800 leading-tight">
+                      <span className="text-sm font-bold text-slate-900 leading-tight">
                         {truncatePatientName(app.patientName)}
                       </span>
-                      <span className="text-[10px] font-medium text-slate-400 mt-0.5 font-mono">
+                      <span className="text-[10px] text-slate-400 font-bold mt-1 leading-none font-mono">
                         {app.rut}
                       </span>
                     </div>
                   </td>
                   
                   {/* Tipo de atención */}
-                  <td className="py-4.5 px-4">
-                    <span className="px-2.5 py-1 bg-sky-50 text-[10px] font-bold text-[#0284c7] border border-sky-100 rounded-lg">
+                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none bg-sky-50 text-sky-700 border-sky-200">
                       {app.attentionType || 'Control General'}
                     </span>
                   </td>
                   
                   {/* Establecimiento */}
-                  <td className="py-4.5 px-4">
-                    <div className="flex items-center gap-1.5 text-[10.5px] font-bold text-slate-500">
+                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500">
                       <MapPin size={12} className="text-slate-400" />
                       {app.establishment || 'Hualañé'}
                     </div>
                   </td>
                   
                   {/* Profesional */}
-                  <td className="py-4.5 px-4">
+                  <td className="py-3.5 px-4 text-xs text-slate-700">
                     <div className="flex flex-col">
                       <span className="text-[10px] font-black text-slate-800 uppercase tracking-tight">
                         {app.professionalName}
@@ -334,45 +330,48 @@ export default function DailyAppointmentList({
                   </td>
                   
                   {/* Estado Badge */}
-                  <td className="py-4.5 px-4">
-                    <span className={`inline-block px-2.5 py-1 rounded-full text-[9.5px] font-black uppercase tracking-wide ${getStatusBadge(app.status)}`}>
+                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${getStatusBadge(app.status)}`}>
                       {app.status}
                     </span>
                   </td>
                   
                   {/* Actions Dropdown Controller */}
-                  <td className="py-4.5 px-6 relative text-center">
-                    <div className="relative inline-block text-left">
+                  <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-center relative">
                       <button 
                         onClick={() => setActiveMenuId(activeMenuId === app.id ? null : app.id)}
-                        className="p-1.5 hover:bg-slate-100 rounded-full text-slate-500 hover:text-slate-800 transition-colors focus:outline-none"
+                        className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                       >
-                        <BulletListSvgIcon size={16} />
+                        <BulletListSvgIcon size={15} />
                       </button>
 
                       {activeMenuId === app.id && (
                         <>
                           <div 
-                            className="fixed inset-0 z-30" 
-                            onClick={() => setActiveMenuId(null)} 
+                            className="fixed inset-0 z-30 cursor-default" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveMenuId(null);
+                            }} 
                           />
-                          <div className="absolute right-0 mt-1 w-52 bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 z-40 text-left animate-in fade-in slide-in-from-top-1 duration-100">
+                          <div className="absolute right-0 top-full mt-1.5 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-40 py-1 text-left text-xs text-gray-700">
                             
-                            <div className="px-3 py-1 text-[8.5px] font-extrabold text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">
+                            <div className="px-3.5 py-1.5 text-[8.5px] font-extrabold text-slate-400 uppercase tracking-widest border-b border-gray-50 mb-1">
                               Acciones Cita
                             </div>
                             
                             <button 
                               onClick={() => handleAction(app.id, 'manage')}
-                              className="w-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-blue-50/50 hover:text-blue-600 transition-colors flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                             >
-                              <Edit2 size={13} />
+                              <Edit2 size={13} className="text-blue-500" />
                               Ver / Editar Cita
                             </button>
 
                             <button 
                               onClick={() => handleAction(app.id, 'status', 'Confirmada')}
-                              className="w-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                             >
                               <CheckCircle size={13} className="text-emerald-500" />
                               Marcar Confirmada
@@ -380,7 +379,7 @@ export default function DailyAppointmentList({
 
                             <button 
                               onClick={() => handleAction(app.id, 'status', 'Realizada')}
-                              className="w-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                             >
                               <CheckCircle size={13} className="text-[#047857]" />
                               Marcar Realizada
@@ -388,7 +387,7 @@ export default function DailyAppointmentList({
 
                             <button 
                               onClick={() => handleAction(app.id, 'status', 'Inasistencia')}
-                              className="w-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-rose-50 hover:text-rose-700 transition-colors flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                             >
                               <AlertTriangle size={13} className="text-rose-500" />
                               Marcar Inasistencia
@@ -396,22 +395,20 @@ export default function DailyAppointmentList({
 
                             <button 
                               onClick={() => handleAction(app.id, 'status', 'Cancelada')}
-                              className="w-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-800 transition-colors flex items-center gap-2"
+                              className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                             >
                               <X size={13} className="text-slate-400" />
                               Cancelar Cita
                             </button>
 
                             {onViewPatient && app.rut && (
-                              <div className="border-t border-slate-100 mt-1.5 pt-1">
-                                <button 
-                                  onClick={() => handleAction(app.id, 'view_patient', app.rut)}
-                                  className="w-full px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-2"
-                                >
-                                  <ArrowUpRight size={13} />
-                                  Ver Ficha PSCV
-                                </button>
-                              </div>
+                              <button 
+                                onClick={() => handleAction(app.id, 'view_patient', app.rut)}
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold border-t border-gray-50 mt-1"
+                              >
+                                <ArrowUpRight size={13} className="text-brand-blue" />
+                                Ver Ficha PSCV
+                              </button>
                             )}
 
                           </div>

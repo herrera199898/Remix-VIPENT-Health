@@ -395,20 +395,20 @@ export default function UserManagement() {
   // Badge stylings 
   const getRoleBadgeStyle = (role: MockUser['role']) => {
     const mapping: Record<MockUser['role'], string> = {
-      'Administrador': 'bg-red-50 text-red-700 border-red-200',
-      'Clínico': 'bg-teal-50 text-teal-700 border-teal-200'
+      'Administrador': 'bg-rose-50 text-rose-700 border-rose-200',
+      'Clínico': 'bg-sky-50 text-sky-700 border-sky-200'
     };
-    return `border px-2 py-0.5 rounded-full text-[11px] font-bold tracking-tight inline-block ${mapping[role] || 'bg-gray-50 text-gray-700 border-gray-200'}`;
+    return `border px-2 py-0.5 rounded-md text-[10px] font-semibold leading-none inline-flex items-center ${mapping[role]}`;
   };
 
   const getStatusBadgeStyle = (status: MockUser['status']) => {
     const mapping: Record<MockUser['status'], string> = {
-      'Activo': 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      'Inactivo': 'bg-slate-100 text-slate-700 border-slate-300',
-      'Pendiente': 'bg-amber-100 text-amber-800 border-amber-300 animate-pulse',
-      'Bloqueado': 'bg-rose-100 text-rose-800 border-rose-300'
+      'Activo': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      'Inactivo': 'bg-slate-50 text-slate-600 border-slate-200',
+      'Pendiente': 'bg-amber-50 text-amber-700 border-amber-200',
+      'Bloqueado': 'bg-rose-50 text-rose-700 border-rose-200'
     };
-    return `border px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold tracking-wider uppercase inline-block ${mapping[status]}`;
+    return `border px-2 py-0.5 rounded-md text-[10px] font-semibold leading-none inline-flex items-center ${mapping[status]}`;
   };
 
   const getEstablishmentIcon = (est: MockUser['establishment']) => {
@@ -449,7 +449,7 @@ export default function UserManagement() {
         </div>
         <button 
           onClick={handleOpenCreateForm}
-          className="bg-brand-blue hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer scale-100 hover:scale-102 active:scale-98 shrink-0 animate-pulse"
+          className="bg-brand-blue hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2.5 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer scale-100 hover:scale-[1.015] active:scale-[0.985] shrink-0"
         >
           <UserPlus size={15} />
           Nuevo usuario
@@ -527,13 +527,13 @@ export default function UserManagement() {
               <table className="w-full border-collapse text-left text-xs text-gray-700">
                 <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
                   <tr>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[25%]">Usuario</th>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[12%]">Rol</th>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[20%]">Especialidad / Profesión</th>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[15%]">Establecimiento</th>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[10%] text-center">Estado</th>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[13%]">Último Acceso</th>
-                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[5%] text-right pr-6 font-bold">Acciones</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[25%] font-sans">Usuario</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[12%] font-sans">Rol</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[20%] font-sans">Especialidad / Profesión</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[15%] font-sans">Establecimiento</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[10%] text-center font-sans">Estado</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[13%] font-sans">Último Acceso</th>
+                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[5%] text-center pr-6 font-sans">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -541,59 +541,59 @@ export default function UserManagement() {
                     filteredUsers.map((user) => (
                       <tr key={user.id} className="hover:bg-slate-50/70 transition-colors">
                         {/* User Profile column */}
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
                       <div className="flex items-center gap-3">
                         {/* Avatar */}
-                        <div className={`w-9 h-9 rounded-full font-black text-xs flex items-center justify-center shrink-0 shadow-xs border ${
+                        <div className={`w-9 h-9 rounded-full font-bold text-xs flex items-center justify-center shrink-0 border ${
                           user.status === 'Bloqueado' ? 'bg-rose-50 text-rose-500 border-rose-200' :
-                          user.status === 'Inactivo' ? 'bg-slate-100 text-slate-500 border-slate-300' :
-                          user.role === 'Administrador' ? 'bg-red-50 text-red-600 border-red-200' :
-                          'bg-teal-50 text-teal-600 border-teal-200'
+                          user.status === 'Inactivo' ? 'bg-slate-50 text-slate-500 border-slate-200' :
+                          user.role === 'Administrador' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                          'bg-sky-50 text-sky-700 border-sky-200'
                         }`}>
                           {getInitials(user.fullName)}
                         </div>
                         <div className="overflow-hidden">
-                          <p className="font-bold text-slate-900 truncate tracking-tight">{user.fullName}</p>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-[10px] text-slate-400 font-bold font-mono">
-                            <span className="text-slate-500 truncate">{user.email}</span>
-                            <span className="hidden sm:inline text-slate-300">|</span>
-                            <span className="text-slate-500 truncate shrink-0">RUT: {user.rut}</span>
+                          <p className="font-bold text-slate-900 truncate tracking-tight text-sm">{user.fullName}</p>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-[10px] text-slate-450 font-semibold font-mono mt-0.5">
+                            <span className="text-slate-400 truncate">{user.email}</span>
+                            <span className="hidden sm:inline text-slate-200 font-normal">|</span>
+                            <span className="text-slate-400 truncate shrink-0 font-sans font-bold">RUT: {user.rut}</span>
                           </div>
                         </div>
                       </div>
                     </td>
 
                     {/* Role column */}
-                    <td className="py-3.5 px-4 vertical-align-middle">
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
                       <span className={getRoleBadgeStyle(user.role)}>
                         {user.role}
                       </span>
                     </td>
 
                     {/* Specialty / Profession column */}
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
                       <span className="text-xs font-semibold text-slate-700 font-sans">
                         {user.specialty || 'No especificada'}
                       </span>
                     </td>
 
                     {/* Establishment column */}
-                    <td className="py-3.5 px-4 font-bold text-slate-700">
-                      <div className="flex items-center gap-1.5 text-xs text-semibold">
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold font-sans">
                         <Building2 size={13} className="text-slate-400 shrink-0" />
                         <span>{getEstablishmentIcon(user.establishment)}</span>
                       </div>
                     </td>
 
                     {/* Status column */}
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center text-xs text-slate-700">
                       <span className={getStatusBadgeStyle(user.status)}>
                         {user.status}
                       </span>
                     </td>
 
                     {/* Last access column */}
-                    <td className="py-3.5 px-4">
+                    <td className="py-3.5 px-4 text-xs text-slate-700">
                       <div className="flex items-center gap-1.5 font-bold text-[11px] text-slate-500 font-mono">
                         <Calendar size={12} className="text-slate-400 shrink-0" />
                         <span>{user.lastAccess}</span>
@@ -601,16 +601,16 @@ export default function UserManagement() {
                     </td>
 
                     {/* Actions column */}
-                    <td className="py-3.5 px-4 text-right pr-6 relative">
-                      <div className="inline-block">
+                    <td className="py-3.5 px-4 text-center pr-6 relative" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-center relative">
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             setActiveMenuId(activeMenuId === user.id ? null : user.id);
                           }}
-                          className="p-1 px-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer shrink-0"
+                          className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer shrink-0"
                         >
-                          <BulletListSvgIcon size={14} />
+                          <BulletListSvgIcon size={15} />
                         </button>
 
                         {activeMenuId === user.id && (
@@ -623,15 +623,18 @@ export default function UserManagement() {
                                 setActiveMenuId(null);
                               }} 
                             />
-                            <div className="absolute right-0 top-full mt-1.5 w-60 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 text-left font-bold text-xs text-gray-700">
+                            <div className="absolute right-0 top-full mt-1.5 w-60 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 text-left text-xs text-gray-700">
+                              <div className="px-3.5 py-1.5 text-[8.5px] font-extrabold text-slate-400 uppercase tracking-widest border-b border-gray-100 mb-1">
+                                Acciones Usuario
+                              </div>
                               <button 
                                 onClick={() => {
                                   setActiveMenuId(null);
                                   handleOpenEditForm(user);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-bold"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
-                                <Edit2 size={13} className="text-blue-600" />
+                                <Edit2 size={13} className="text-blue-500" />
                                 Editar usuario
                               </button>
                               <button 
@@ -639,9 +642,9 @@ export default function UserManagement() {
                                   setActiveMenuId(null);
                                   handleOpenPermissions(user.role);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-bold"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
-                                <Eye size={13} className="text-emerald-600" />
+                                <Eye size={13} className="text-emerald-500" />
                                 Ver permisos del rol
                               </button>
                               <button 
@@ -649,7 +652,7 @@ export default function UserManagement() {
                                   setActiveMenuId(null);
                                   handleToggleStatus(user);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-bold text-slate-700"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
                                 <Lock size={13} className="text-slate-400" />
                                 {user.status === 'Activo' ? 'Inactivar usuario' : 'Activar usuario'}
@@ -659,7 +662,7 @@ export default function UserManagement() {
                                   setActiveMenuId(null);
                                   handleBlockUser(user);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 border-b border-gray-50 font-bold"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold"
                               >
                                 <Lock size={13} className="text-rose-500" />
                                 {user.status === 'Bloqueado' ? 'Desbloquear cuenta' : 'Bloquear de seguridad'}
@@ -669,7 +672,7 @@ export default function UserManagement() {
                                   setActiveMenuId(null);
                                   handleResetPassword(user);
                                 }}
-                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-bold text-amber-600"
+                                className="w-full text-left px-3.5 py-2 hover:bg-gray-50 flex items-center gap-2 font-semibold border-t border-gray-100 mt-1 pt-1"
                               >
                                 <Key size={13} className="text-amber-500" />
                                 Restablecer contraseña
