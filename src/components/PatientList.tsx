@@ -473,21 +473,21 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
   });
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 relative">
+    <div id="vipent-patient-list-view" className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
       {/* Header section with summaries */}
-      <div className="mb-4 shrink-0 px-1">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              <Heart className="text-brand-blue" size={24} />
-              Pacientes PSCV
-            </h1>
-            <p className="text-xs text-gray-500 font-medium mt-0.5">
-              Gestión y priorización de pacientes del Programa de Salud Cardiovascular
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-200 shadow-xs text-xs">
+      <div className="p-6 md:p-8 bg-white border-b border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            <Heart className="text-brand-blue" size={24} />
+            <span>Pacientes PSCV</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Gestión y priorización de pacientes del Programa de Salud Cardiovascular
+          </p>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-200 shadow-xs text-xs">
             <div className="px-2 border-r border-gray-150">
               <span className="text-gray-400 font-bold text-[10px] block uppercase leading-none">Total Encontrados</span>
               <span className="text-sm font-black text-brand-blue">{filteredPatients.length}</span>
@@ -497,156 +497,173 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
               <span className="text-sm font-black text-gray-800">{activeChips.length}</span>
             </div>
             <div className="px-2">
-              <span className="text-gray-400 font-bold text-[10px] block uppercase leading-none">Estado Datos</span>
+              <span className="text-gray-400 font-bold text-[10px] block uppercase leading-none">Actualizado</span>
               <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1 leading-none mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Actualizado hace 15 min
+                <span>En vivo</span>
               </span>
             </div>
           </div>
+
+          <button 
+            id="btn-exportar-pacientes"
+            onClick={handleExportExcel}
+            className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold transition-all shadow-sm cursor-pointer"
+          >
+            <Download size={14} />
+            <span>Exportar nómina</span>
+          </button>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm flex-1 flex flex-col min-h-0 overflow-hidden relative">
+      <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
         
-        {/* Search controls */}
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col gap-3">
-          <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
-            
-            <div className="relative flex-1 max-w-md">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={16} className="text-gray-400" />
+        {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
+          
+          {/* FILTROS COMPACTOS EN UN GRID */}
+          <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              
+              {/* Buscador */}
+              <div className="relative">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Buscar por nombre, RUT, ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue outline-none transition-all shadow-2xs font-semibold text-slate-705 placeholder-slate-400"
+                />
+                {searchTerm && (
+                  <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-650 cursor-pointer">
+                    <X size={12} />
+                  </button>
+                )}
               </div>
-              <input 
-                type="text" 
-                placeholder="Buscar por nombre, RUT o ID interno"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg py-2 pl-10 pr-4 text-xs font-semibold focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue outline-none transition-all shadow-2xs"
-              />
-              {searchTerm && (
-                <button onClick={() => setSearchTerm('')} className="absolute inset-y-0 right-0 p-2 text-gray-400 hover:text-gray-600 flex items-center">
-                  <X size={14} />
-                </button>
-              )}
+
+              {/* Filtro Estado PSCV */}
+              <div>
+                <select
+                  value={filterMode}
+                  onChange={(e) => setFilterMode(e.target.value as any)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue font-bold text-slate-700 transition-all shadow-sm cursor-pointer"
+                >
+                  <option value="Todos">Estado: Todos</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </div>
+
+              {/* Filtro Riesgo */}
+              <div>
+                <select
+                  value={riskFilter}
+                  onChange={(e) => setRiskFilter(e.target.value as any)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue font-bold text-slate-700 transition-all shadow-sm cursor-pointer"
+                >
+                  <option value="Todos">Riesgo: Todos</option>
+                  <option value="Alto">Alto</option>
+                  <option value="Moderado">Moderado</option>
+                  <option value="Bajo">Bajo</option>
+                </select>
+              </div>
+
+              {/* Filtro Compensación */}
+              <div>
+                <select
+                  value={compensationFilter}
+                  onChange={(e) => setCompensationFilter(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue font-bold text-slate-700 transition-all shadow-sm cursor-pointer"
+                >
+                  <option value="Todos">Compensación: Todos</option>
+                  <option value="Compensado">Compensado</option>
+                  <option value="No compensado">No compensado (Cerradas/Cualquiera)</option>
+                  <option value="No compensado HTA">No compensado HTA</option>
+                  <option value="No compensado DPN">No compensado DPN</option>
+                  <option value="No compensado HTA + DPN">No compensado HTA + DPN</option>
+                </select>
+              </div>
+
+              {/* Filtro Prioridad */}
+              <div>
+                <select
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value as any)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue font-bold text-slate-700 transition-all shadow-sm cursor-pointer"
+                >
+                  <option value="Todos">Prioridad: Todos</option>
+                  <option value="Normal">Normal</option>
+                  <option value="Requiere revisión">Requiere revisión</option>
+                  <option value="Requiere rescate">Requiere rescate</option>
+                  <option value="Sin próxima cita">Sin próxima cita</option>
+                  <option value="Examen pendiente">Examen pendiente</option>
+                </select>
+              </div>
+
             </div>
 
-            <div className="flex items-center gap-2 select-none">
+            {/* Extra row for quick trigger buttons */}
+            <div className="flex items-center gap-2 mt-1 select-none">
               <button
                 onClick={() => setIsAdvancedFiltersOpen(!isAdvancedFiltersOpen)}
-                className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 hover:border-gray-300 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer"
               >
-                <SlidersHorizontal size={14} className="text-brand-blue" />
-                Filtros avanzados
+                <SlidersHorizontal size={13} className="text-brand-blue" />
+                <span>Búsqueda avanzada / Diagnósticos</span>
                 {activeChips.length > 0 && (
                   <span className="bg-brand-blue text-white text-[10px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black">
                     {activeChips.length}
                   </span>
                 )}
               </button>
-
-              <button 
-                onClick={handleExportExcel}
-                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-              >
-                <Download size={14} />
-                Exportar nómina
-              </button>
             </div>
+
+            {/* Active filter chips */}
+            {activeChips.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-150 mt-1">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-1">Filtros activos:</span>
+                {activeChips.map(c => (
+                  <span key={c.id} className="inline-flex items-center gap-1 pl-2 pr-1.5 py-0.5 bg-brand-blue/5 text-brand-blue border border-brand-blue/15 rounded-lg text-[10px] font-bold">
+                    <span>{c.label}</span>
+                    <button onClick={c.onRemove} className="p-0.5 rounded-full hover:bg-brand-blue/20 text-brand-blue/85 hover:text-brand-blue cursor-pointer">
+                      <X size={10} />
+                    </button>
+                  </span>
+                ))}
+                <button onClick={handleClearAllFilters} className="text-[10px] font-black uppercase text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded-md cursor-pointer ml-auto transition-colors">
+                  Limpiar filtros
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Active chips wrapper */}
-          {activeChips.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100 mt-1">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mr-1">Filtros activos:</span>
-              {activeChips.map(c => (
-                <span key={c.id} className="inline-flex items-center gap-1 pl-2 pr-1.5 py-0.5 bg-brand-blue/5 text-brand-blue border border-brand-blue/15 rounded-lg text-[10px] font-bold">
-                  {c.label}
-                  <button onClick={c.onRemove} className="p-0.5 rounded-full hover:bg-brand-blue/20 text-brand-blue/80 hover:text-brand-blue cursor-pointer">
-                    <X size={10} />
-                  </button>
-                </span>
-              ))}
-              <button onClick={handleClearAllFilters} className="text-[10px] font-black uppercase text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-105 px-2 py-0.5 rounded-md cursor-pointer ml-auto">
-                Limpiar todo
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Simplified Desktop Table (exactly 6 clean columns) */}
-        <div className="flex-1 overflow-auto hidden md:block">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-[#f8fafc] sticky top-0 z-10 border-b border-gray-250/70 shadow-2xs">
-              <tr>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider w-[24%]">
-                  <div className="text-gray-400 text-[10px] uppercase font-bold tracking-wider leading-none mb-1">Paciente</div>
-                  <div className="text-[11px] font-bold text-gray-400 py-0.5 flex items-center h-[22px]">
-                    Nombre / RUT
-                  </div>
-                </th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider w-[14%]">
-                  <div className="text-gray-400 text-[10px] uppercase font-bold tracking-wider leading-none mb-1">Estado PSCV</div>
-                  <select
-                    value={filterMode}
-                    onChange={(e) => setFilterMode(e.target.value as any)}
-                    className="w-full bg-white border border-gray-200 hover:border-gray-300 rounded px-1.5 py-0.5 text-[11px] font-extrabold text-gray-700 outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue cursor-pointer"
-                  >
-                    <option value="Todos">Todos</option>
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
-                  </select>
-                </th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider w-[14%]">
-                  <div className="text-gray-400 text-[10px] uppercase font-bold tracking-wider leading-none mb-1">Riesgo</div>
-                  <select
-                    value={riskFilter}
-                    onChange={(e) => setRiskFilter(e.target.value as any)}
-                    className="w-full bg-white border border-gray-200 hover:border-gray-300 rounded px-1.5 py-0.5 text-[11px] font-extrabold text-gray-700 outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue cursor-pointer"
-                  >
-                    <option value="Todos">Todos</option>
-                    <option value="Alto">Alto</option>
-                    <option value="Moderado">Moderado</option>
-                    <option value="Bajo">Bajo</option>
-                  </select>
-                </th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider w-[18%]">
-                  <div className="text-gray-400 text-[10px] uppercase font-bold tracking-wider leading-none mb-1">Compensación</div>
-                  <select
-                    value={compensationFilter}
-                    onChange={(e) => setCompensationFilter(e.target.value)}
-                    className="w-full bg-white border border-gray-200 hover:border-gray-300 rounded px-1.5 py-0.5 text-[11px] font-extrabold text-gray-700 outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue cursor-pointer"
-                  >
-                    <option value="Todos">Todos</option>
-                    <option value="Compensado">Compensado</option>
-                    <option value="No compensado">No comp. (Cualquiera)</option>
-                    <option value="No compensado HTA">No comp. HTA</option>
-                    <option value="No compensado DPN">No comp. DPN</option>
-                    <option value="No compensado HTA + DPN">No comp. HTA + DPN</option>
-                  </select>
-                </th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider w-[18%]">
-                  <div className="text-gray-400 text-[10px] uppercase font-bold tracking-wider leading-none mb-1">Prioridad</div>
-                  <select
-                    value={priorityFilter}
-                    onChange={(e) => setPriorityFilter(e.target.value as any)}
-                    className="w-full bg-white border border-gray-200 hover:border-gray-300 rounded px-1.5 py-0.5 text-[11px] font-extrabold text-gray-700 outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue cursor-pointer"
-                  >
-                    <option value="Todos">Todos</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Requiere revisión">R. Revisión</option>
-                    <option value="Requiere rescate">R. Rescate</option>
-                    <option value="Sin próxima cita">Sin Cita</option>
-                    <option value="Examen pendiente">Pendiente Exam</option>
-                  </select>
-                </th>
-                <th className="py-3 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right w-[12%]">
-                  <div className="text-gray-400 text-[10px] uppercase font-bold tracking-wider leading-none mb-1 flex items-center justify-end">Acciones</div>
-                  <div className="h-[22px]" />
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 select-none">
+          {/* Table Container */}
+          <div className="flex-1 overflow-auto hidden md:block">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-[#f8fafc] sticky top-0 z-10 border-b border-gray-200">
+                <tr>
+                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[24%]">
+                    Paciente / RUT
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">
+                    Estado PSCV
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[14%]">
+                    Riesgo Cardiovascular
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[18%]">
+                    Compensación
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[18%]">
+                    Prioridad
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[12%] pr-6">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 select-none">
               {paginatedPatients.map(patient => {
                 const isHighlighted = highlightedPatientId === patient.id;
                 const pscvState = getEstadoPscv(patient);
@@ -915,8 +932,9 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Sliding Advanced Filters Drawer */}
+      {/* Sliding Advanced Filters Drawer */}
         {isAdvancedFiltersOpen && (
           <div className="absolute inset-y-0 right-0 z-30 w-80 bg-white border-l border-gray-200 shadow-xl flex flex-col justify-between animate-slideIn">
             <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-gray-50 to-white">

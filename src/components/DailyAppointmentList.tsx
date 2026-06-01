@@ -123,161 +123,162 @@ export default function DailyAppointmentList({
   };
 
   return (
-    <div className="flex-1 bg-white border border-gray-200 rounded-lg flex flex-col overflow-hidden shadow-sm">
+    <div id="vipent-appointments-list-view" className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
       
       {/* Header */}
-      <div className="p-6 pb-4 flex flex-col gap-6">
-        
-        {/* Title Block */}
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-              Citas Médicas
-            </h1>
-            <p className="text-xs font-semibold text-slate-500 mt-0.5">
-              Gestión de agenda y seguimiento de citaciones PSCV
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#e0f2fe] border border-blue-100 rounded-full text-[11px] font-black text-blue-750 text-blue-700 uppercase tracking-wider">
-            <Calendar size={13} />
-            {formatDate(date)}
-          </div>
+      <div className="p-6 md:p-8 bg-white border-b border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            <Calendar className="text-brand-blue" size={24} />
+            <span>Citas Médicas</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Gestión de agenda y seguimiento de citaciones PSCV
+          </p>
         </div>
+        
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#e0f2fe] border border-blue-100 rounded-full text-[11px] font-black text-blue-750 uppercase tracking-wider">
+          <Calendar size={13} className="text-blue-600" />
+          <span className="text-blue-750 font-bold">{formatDate(date)}</span>
+        </div>
+      </div>
 
+      <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
+        
         {/* Top Agenda Indicators */}
-        <div className="grid grid-cols-4 gap-4">
-          <div className="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200/60 flex items-center justify-between">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs flex items-center justify-between">
             <div>
-              <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Citas del Día</span>
-              <span className="text-lg font-black text-slate-800">{totalCount}</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Citas del Día</span>
+              <span className="text-xl font-bold text-slate-800">{totalCount}</span>
             </div>
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
               <Calendar size={15} />
             </div>
           </div>
 
-          <div className="bg-[#ecfdf5]/80 p-3.5 rounded-xl border border-emerald-100/80 flex items-center justify-between">
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs flex items-center justify-between">
             <div>
-              <span className="text-[9px] font-extrabold text-[#10B981] uppercase tracking-wider block">Confirmadas</span>
-              <span className="text-lg font-black text-emerald-800">{confirmedCount}</span>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider block">Confirmadas</span>
+              <span className="text-xl font-bold text-emerald-800">{confirmedCount}</span>
             </div>
-            <div className="p-2 bg-white text-emerald-500 rounded-lg shadow-3xs">
+            <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg">
               <CheckCircle size={15} />
             </div>
           </div>
 
-          <div className="bg-amber-50/50 p-3.5 rounded-xl border border-amber-100 flex items-center justify-between">
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs flex items-center justify-between">
             <div>
-              <span className="text-[9px] font-extrabold text-amber-600 uppercase tracking-wider block">Pendientes</span>
-              <span className="text-lg font-black text-amber-800">{pendingCount}</span>
+              <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider block">Pendientes</span>
+              <span className="text-xl font-bold text-amber-800">{pendingCount}</span>
             </div>
-            <div className="p-2 bg-white text-amber-500 rounded-lg shadow-3xs">
+            <div className="p-2 bg-amber-50 text-amber-500 rounded-lg">
               <Clock size={15} />
             </div>
           </div>
 
-          <div className="bg-rose-50/80 p-3.5 rounded-xl border border-rose-100 flex items-center justify-between">
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs flex items-center justify-between">
             <div>
-              <span className="text-[9px] font-extrabold text-rose-500 uppercase tracking-wider block">Inasistencias</span>
-              <span className="text-lg font-black text-rose-800">{noShowCount}</span>
+              <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider block">Inasistencias</span>
+              <span className="text-xl font-bold text-rose-800">{noShowCount}</span>
             </div>
-            <div className="p-2 bg-white text-rose-500 rounded-lg shadow-3xs">
+            <div className="p-2 bg-rose-50 text-rose-500 rounded-lg">
               <AlertTriangle size={15} />
             </div>
           </div>
         </div>
 
-        {/* Filters Panel */}
-        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60 flex flex-col md:flex-row gap-3">
+        {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
           
-          {/* Text Search */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar paciente por nombre o RUT..."
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-250 border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/10 placeholder:text-slate-400 text-slate-700"
-            />
-            {searchTerm && (
-              <button 
-                onClick={() => setSearchTerm('')} 
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+          {/* Filters Panel */}
+          <div className="p-4 border-b border-gray-205 bg-gray-50/55 flex flex-col md:flex-row gap-3">
+            
+            {/* Text Search */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar paciente por nombre o RUT..."
+                className="w-full pl-9 pr-4 py-1.5 bg-white border border-gray-350 rounded-lg text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue placeholder:text-gray-400 text-slate-705"
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')} 
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Specialty Filter */}
+            <div className="relative min-w-[150px]">
+              <select
+                value={filterProfessional}
+                onChange={(e) => setFilterProfessional(e.target.value)}
+                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
               >
-                <X size={14} />
-              </button>
-            )}
+                <option value="ALL">TODOS LOS PROFESIONALES</option>
+                <option value="MEDICO">MÉDICO</option>
+                <option value="ENFERMERA">ENFERMERA</option>
+                <option value="NUTRICIONISTA">NUTRICIONISTA</option>
+              </select>
+              <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-400 pointer-events-none" />
+            </div>
+
+            {/* Status Filter */}
+            <div className="relative min-w-[150px]">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
+              >
+                <option value="ALL">TODOS LOS ESTADOS</option>
+                <option value="PENDIENTE">PENDIENTE</option>
+                <option value="PROGRAMADA">PROGRAMADA</option>
+                <option value="CONFIRMADA">CONFIRMADA</option>
+                <option value="REALIZADA">REALIZADA</option>
+                <option value="CANCELADA">CANCELADA</option>
+                <option value="REPROGRAMADA">REPROGRAMADA</option>
+                <option value="INASISTENCIA">INASISTENCIA</option>
+              </select>
+              <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-400 pointer-events-none" />
+            </div>
+
+            {/* Establishment Filter */}
+            <div className="relative min-w-[140px]">
+              <select
+                value={filterEstablishment}
+                onChange={(e) => setFilterEstablishment(e.target.value)}
+                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
+              >
+                <option value="ALL">TODAS LAS SEDES</option>
+                <option value="Hualañé">HUALAÑÉ</option>
+                <option value="Curepto">CUREPTO</option>
+              </select>
+              <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-400 pointer-events-none" />
+            </div>
+
           </div>
 
-          {/* Specialty Filter */}
-          <div className="relative min-w-[150px]">
-            <select
-              value={filterProfessional}
-              onChange={(e) => setFilterProfessional(e.target.value)}
-              className="w-full bg-white border border-slate-200 px-3 py-2 rounded-lg text-[10px] font-bold text-slate-600 uppercase tracking-wider cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
-            >
-              <option value="ALL">TODOS LOS PROFESIONALES</option>
-              <option value="MEDICO">MÉDICO</option>
-              <option value="ENFERMERA">ENFERMERA</option>
-              <option value="NUTRICIONISTA">NUTRICIONISTA</option>
-            </select>
-            <ChevronDown size={12} className="absolute right-2.5 top-[14px] text-slate-400 pointer-events-none" />
-          </div>
-
-          {/* Status Filter */}
-          <div className="relative min-w-[150px]">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full bg-white border border-slate-200 px-3 py-2 rounded-lg text-[10px] font-bold text-slate-600 uppercase tracking-wider cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
-            >
-              <option value="ALL">TODOS LOS ESTADOS</option>
-              <option value="PENDIENTE">PENDIENTE</option>
-              <option value="PROGRAMADA">PROGRAMADA</option>
-              <option value="CONFIRMADA">CONFIRMADA</option>
-              <option value="REALIZADA">REALIZADA</option>
-              <option value="CANCELADA">CANCELADA</option>
-              <option value="REPROGRAMADA">REPROGRAMADA</option>
-              <option value="INASISTENCIA">INASISTENCIA</option>
-            </select>
-            <ChevronDown size={12} className="absolute right-2.5 top-[14px] text-slate-400 pointer-events-none" />
-          </div>
-
-          {/* Establishment Filter */}
-          <div className="relative min-w-[140px]">
-            <select
-              value={filterEstablishment}
-              onChange={(e) => setFilterEstablishment(e.target.value)}
-              className="w-full bg-white border border-slate-200 px-3 py-2 rounded-lg text-[10px] font-bold text-slate-600 uppercase tracking-wider cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
-            >
-              <option value="ALL">TODAS LAS SEDES</option>
-              <option value="Hualañé">HUALAÑÉ</option>
-              <option value="Curepto">CUREPTO</option>
-            </select>
-            <ChevronDown size={12} className="absolute right-2.5 top-[14px] text-slate-400 pointer-events-none" />
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <table className="w-full text-left border-collapse table-fixed">
-          <thead>
-            <tr className="bg-slate-50 border-y border-slate-200">
-              <th className="py-2.5 px-6 w-[100px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Hora</th>
-              <th className="py-2.5 px-4 w-[240px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Paciente</th>
-              <th className="py-2.5 px-4 w-[160px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Atención PSCV</th>
-              <th className="py-2.5 px-4 w-[120px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Sede</th>
-              <th className="py-2.5 px-4 w-[180px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Profesional</th>
-              <th className="py-2.5 px-4 w-[130px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Estado</th>
-              <th className="py-2.5 px-6 w-[100px] text-[10px] font-extrabold text-slate-400 uppercase tracking-widest text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+          {/* Table Container */}
+          <div className="flex-1 overflow-auto">
+            <table className="w-full text-left border-collapse table-fixed">
+              <thead className="bg-[#f8fafc] sticky top-0 z-10 border-b border-gray-200">
+                <tr>
+                  <th className="py-3 px-6 w-[100px] text-xs font-bold text-slate-500 uppercase tracking-wider">Hora</th>
+                  <th className="py-3 px-4 w-[240px] text-xs font-bold text-slate-500 uppercase tracking-wider">Paciente</th>
+                  <th className="py-3 px-4 w-[160px] text-xs font-bold text-slate-500 uppercase tracking-wider">Atención PSCV</th>
+                  <th className="py-3 px-4 w-[120px] text-xs font-bold text-slate-500 uppercase tracking-wider">Sede</th>
+                  <th className="py-3 px-4 w-[180px] text-xs font-bold text-slate-500 uppercase tracking-wider">Profesional</th>
+                  <th className="py-3 px-4 w-[130px] text-xs font-bold text-slate-500 uppercase tracking-wider">Estado</th>
+                  <th className="py-3 px-6 w-[100px] text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
             {filteredAppointments.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-12 text-center text-xs font-semibold text-slate-400 bg-slate-50/20">
@@ -425,6 +426,8 @@ export default function DailyAppointmentList({
           </tbody>
         </table>
       </div>
+      </div> {/* closes CONTAINER PRINCIPAL */}
+      </div> {/* closes padding container */}
 
       {/* Footer / Back Button */}
       <div className="p-4 px-6 border-t border-gray-100 flex justify-end shrink-0 bg-slate-55 bg-slate-50">

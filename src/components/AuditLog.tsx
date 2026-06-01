@@ -5,11 +5,7 @@ import {
   ChevronDown, 
   CheckCircle2, 
   XCircle, 
-  LogIn, 
-  Edit3, 
-  PlusCircle, 
   Eye, 
-  LogOut, 
   X, 
   ShieldAlert, 
   AlertTriangle, 
@@ -34,7 +30,8 @@ interface AuditEntry {
   timestamp: string;
   userName: string;
   userEmail: string;
-  userRole: string;
+  userRole: 'Administrador' | 'Clínico' | 'No autenticado';
+  userSpecialty: string;
   establishment: 'Hualañé' | 'Curepto' | 'Ambos';
   module: ModuleType;
   action: ActionType;
@@ -45,7 +42,7 @@ interface AuditEntry {
   originIp: string;
   device: string;
   description: string;
-  technicalDetail?: string;
+  systemReference: string;
 }
 
 // --- REALISTIC VIPENT HEALTH AUDIT DATA ---
@@ -54,9 +51,10 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
   {
     id: 'EVT-1001',
     timestamp: '2026-06-01 14:15:22',
-    userName: 'Dr. Carlos Mendoza',
-    userEmail: 'carlos.mendoza@pscv.cl',
-    userRole: 'Médico PSCV',
+    userName: 'Carlos Mendoza Aliste',
+    userEmail: 'cmendoza@hualane.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Médico Cirujano',
     establishment: 'Hualañé',
     module: 'CITAS',
     action: 'MODIFICACION',
@@ -67,15 +65,16 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.1.102',
     device: 'PC Escritorio - Chrome v124 (Windows)',
     description: 'Modificación de la hora de la próxima cita de control de hipertensión para Paciente PSCV ID P-0041.',
-    technicalDetail: 'UPDATE appointments SET time = "15:30", updated_at = NOW() WHERE id = 22'
+    systemReference: 'LOG-AUDIT-2026-06-01-1001'
   },
   {
     id: 'EVT-1002',
     timestamp: '2026-06-01 13:40:10',
-    userName: 'Paula Espinoza',
-    userEmail: 'paula.espinoza@pscv.cl',
-    userRole: 'Coordinador PSCV Hualañé',
-    establishment: 'Hualañé',
+    userName: 'Patricia Rojas Silva',
+    userEmail: 'projas@curepto.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Enfermera Coordinadora',
+    establishment: 'Curepto',
     module: 'REM_P4',
     action: 'VALIDACION',
     resourceType: 'Reporte REM-P4',
@@ -85,14 +84,15 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.1.50',
     device: 'Notebook - Firefox v125 (macOS)',
     description: 'Validación del reporte consolidado REM-P4 de la sección de cardiología preventiva correspondiente a Mayo 2026.',
-    technicalDetail: 'POST /api/reports/rem-p4/validate { reportId: "REP-2026-05", section: "C3" } -> Status 200 OK'
+    systemReference: 'LOG-AUDIT-2026-06-01-1002'
   },
   {
     id: 'EVT-1003',
     timestamp: '2026-06-01 12:10:05',
-    userName: 'Jorge Alarcón',
-    userEmail: 'jorge.alarcon@pscv.cl',
-    userRole: 'Administrativo Agenda',
+    userName: 'Juan Carlos Plaza',
+    userEmail: 'jplaza@hualane.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Administrador de SOME',
     establishment: 'Hualañé',
     module: 'CITAS',
     action: 'MODIFICACION',
@@ -103,14 +103,15 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.1.15',
     device: 'PC Escritorio - Edge v123 (Windows)',
     description: 'Marcación de inasistencia (No-Show) para cita agendada de control cardiovascular.',
-    technicalDetail: 'UPDATE appointments SET status = "INASISTENCIA", logged_by = "jorge.alarcon" WHERE id = 85'
+    systemReference: 'LOG-AUDIT-2026-06-01-1003'
   },
   {
     id: 'EVT-1004',
     timestamp: '2026-06-01 11:30:15',
-    userName: 'Loreto Sánchez',
-    userEmail: 'loreto.sanchez@pscv.cl',
-    userRole: 'Auditor / Lector',
+    userName: 'Gloria Mandiola Fuentes',
+    userEmail: 'gmandiola@minsal.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Auditor Externo',
     establishment: 'Ambos',
     module: 'PACIENTES',
     action: 'LECTURA',
@@ -121,32 +122,34 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '200.72.148.10',
     device: 'Tablet - Safari (iOS)',
     description: 'Consulta detallada del perfil y ficha de monitoreo del Paciente PSCV ID P-0041 para auditoría de continuidad de cuidado.',
-    technicalDetail: 'GET /api/patients/P-0041/history -> Response 200 OK (3.2KB)'
+    systemReference: 'LOG-AUDIT-2026-06-01-1004'
   },
   {
     id: 'EVT-1005',
     timestamp: '2026-06-01 10:45:00',
-    userName: 'Sandro Valenzuela',
-    userEmail: 'sandro.valenzuela@pscv.cl',
-    userRole: 'Administrador VIPENT',
+    userName: 'Sandro Valenzuela Alarcón',
+    userEmail: 'salarcon@vipent.cl',
+    userRole: 'Administrador',
+    userSpecialty: 'Director de Informática',
     establishment: 'Ambos',
     module: 'USUARIOS',
     action: 'BLOQUEO',
     resourceType: 'Usuario',
-    resourceLabel: 'Usuario: Técnico Paramédico Gladys',
+    resourceLabel: 'Usuario: Camila Silva Torres',
     result: 'BLOQUEADO',
     severity: 'Alta',
     originIp: '192.168.1.10',
     device: 'Notebook - Chrome v124 (Linux)',
-    description: 'Bloqueo preventivo de cuenta de usuario debido a sospecha de credenciales comprometidas.',
-    technicalDetail: 'PUT /api/users/gladys.medina/status { active: false, reason: "Security compromise" } -> Affected rows: 1'
+    description: 'Bloqueo preventivo de cuenta de usuario debido a sospecha de credenciales compromised.',
+    systemReference: 'LOG-AUDIT-2026-06-01-1005'
   },
   {
     id: 'EVT-1006',
     timestamp: '2026-06-01 09:20:11',
-    userName: 'Enf. Camila Silva',
-    userEmail: 'camila.silva@pscv.cl',
-    userRole: 'Enfermera PSCV',
+    userName: 'Camila Silva Torres',
+    userEmail: 'csilva@curepto.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Enfermera',
     establishment: 'Curepto',
     module: 'PACIENTES',
     action: 'CREACION',
@@ -157,15 +160,16 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.2.112',
     device: 'PC Escritorio - Chrome v124 (Windows)',
     description: 'Ingreso de nuevo paciente hipertenso compensado al programa cardiovascular (PSCV). ID generado parcialmente.',
-    technicalDetail: 'POST /api/patients/create { first_name: "Luis", last_name: "M.", risk: "Bajo" }'
+    systemReference: 'LOG-AUDIT-2026-06-01-1006'
   },
   {
     id: 'EVT-1007',
     timestamp: '2026-05-31 17:05:44',
-    userName: 'Claudio Rivas',
-    userEmail: 'claudio.rivas@pscv.cl',
-    userRole: 'Coordinador PSCV Curepto',
-    establishment: 'Curepto',
+    userName: 'Roberto Gómez Pardo',
+    userEmail: 'rgomez@hualane.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Médico Coordinador PSCV',
+    establishment: 'Hualañé',
     module: 'REM_P4',
     action: 'EXPORTACION',
     resourceType: 'Reporte REM-P4',
@@ -174,15 +178,16 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     severity: 'Media',
     originIp: '192.168.2.20',
     device: 'PC Escritorio - Firefox v125 (Windows)',
-    description: 'Exportación exitosa de los datos estadísticos REM-P4 del establecimiento de Curepto para carga ministerial.',
-    technicalDetail: 'GET /api/reports/rem-p4/export?format=xlsx&facility=curepto -> Binary Stream (45KB)'
+    description: 'Exportación exitosa de los datos estadísticos REM-P4 del establecimiento de Hualañé para carga ministerial.',
+    systemReference: 'LOG-AUDIT-2026-05-31-1007'
   },
   {
     id: 'EVT-1008',
     timestamp: '2026-05-31 14:12:30',
     userName: 'Intento de Acceso Externo',
     userEmail: 'unknown@mail.com',
-    userRole: 'Sin Rol Detectado',
+    userRole: 'No autenticado',
+    userSpecialty: 'No aplica',
     establishment: 'Ambos',
     module: 'LOGIN',
     action: 'ERROR_ACCESO',
@@ -192,15 +197,16 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     severity: 'Alta',
     originIp: '185.220.101.5',
     device: 'Terminal desconocido / curl 7.81.0',
-    description: 'Intento de inicio de sesión fallido. Múltiples intentos con contraseña incorrecta para la cuenta "sandro.valenzuela@pscv.cl".',
-    technicalDetail: 'POST /api/auth/login -> 401 Unauthorized - IP Blacklisted candidate'
+    description: 'Intento de inicio de sesión fallido. Múltiples intentos con contraseña incorrecta para la cuenta "salarcon@vipent.cl".',
+    systemReference: 'LOG-AUDIT-2026-05-31-1008'
   },
   {
     id: 'EVT-1009',
     timestamp: '2026-05-31 11:30:10',
-    userName: 'Dr. Carlos Mendoza',
-    userEmail: 'carlos.mendoza@pscv.cl',
-    userRole: 'Médico PSCV',
+    userName: 'Carlos Mendoza Aliste',
+    userEmail: 'cmendoza@hualane.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Médico Cirujano',
     establishment: 'Hualañé',
     module: 'PACIENTES',
     action: 'LECTURA',
@@ -211,14 +217,15 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.1.102',
     device: 'PC Escritorio - Chrome v124 (Windows)',
     description: 'Intento de acceder a examen clínico crítico de un paciente sin consentimiento del jefe de programa (advertencia de privilegios elevada).',
-    technicalDetail: 'GET /api/patients/P-0012/lab-docs -> Privileges flagged but bypassed under EMERGENCY flag'
+    systemReference: 'LOG-AUDIT-2026-05-31-1009'
   },
   {
     id: 'EVT-1010',
     timestamp: '2026-05-31 08:00:25',
-    userName: 'Jorge Alarcón',
-    userEmail: 'jorge.alarcon@pscv.cl',
-    userRole: 'Administrativo Agenda',
+    userName: 'Juan Carlos Plaza',
+    userEmail: 'jplaza@hualane.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Administrador de SOME',
     establishment: 'Hualañé',
     module: 'LOGIN',
     action: 'LOGIN',
@@ -229,15 +236,16 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.1.15',
     device: 'PC Escritorio - Edge v123 (Windows)',
     description: 'Inicio de sesión exitoso al sistema de agenda médica VIPENT.',
-    technicalDetail: 'AUTH TOKEN issued token_id=t_77df23 expires_in=28800s'
+    systemReference: 'LOG-AUDIT-2026-05-31-1010'
   },
   {
     id: 'EVT-1011',
     timestamp: '2026-05-30 16:45:00',
-    userName: 'Paula Espinoza',
-    userEmail: 'paula.espinoza@pscv.cl',
-    userRole: 'Coordinador PSCV Hualañé',
-    establishment: 'Hualañé',
+    userName: 'Patricia Rojas Silva',
+    userEmail: 'projas@curepto.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Enfermera Coordinadora',
+    establishment: 'Ambos',
     module: 'SISTEMA',
     action: 'MODIFICACION',
     resourceType: 'Configuración',
@@ -246,15 +254,16 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     severity: 'Media',
     originIp: '192.168.1.50',
     device: 'Notebook - Firefox v125 (macOS)',
-    description: 'Modificación de los umbrales de alerta de inactividad de control cardiovascular en Hualañé.',
-    technicalDetail: 'POST /api/settings/thresholds { min_days: 180, alert_grace_period: 30 }'
+    description: 'Modificación de los umbrales de alerta de inactividad de control cardiovascular.',
+    systemReference: 'LOG-AUDIT-2026-05-30-1011'
   },
   {
     id: 'EVT-1012',
     timestamp: '2026-05-30 12:30:11',
-    userName: 'Enf. Camila Silva',
-    userEmail: 'camila.silva@pscv.cl',
-    userRole: 'Enfermera PSCV',
+    userName: 'Camila Silva Torres',
+    userEmail: 'csilva@curepto.cl',
+    userRole: 'Clínico',
+    userSpecialty: 'Enfermera',
     establishment: 'Curepto',
     module: 'LOGIN',
     action: 'LOGOUT',
@@ -265,7 +274,7 @@ const AUDIT_LOGS_DATA: AuditEntry[] = [
     originIp: '192.168.2.112',
     device: 'PC Escritorio - Chrome v124 (Windows)',
     description: 'Cierre de sesión manual voluntario.',
-    technicalDetail: 'DELETE /api/auth/sessions/current'
+    systemReference: 'LOG-AUDIT-2026-05-30-1012'
   }
 ];
 
@@ -277,6 +286,7 @@ export default function AuditLog() {
   const [selectedResult, setSelectedResult] = useState<ResultType | 'TODOS'>('TODOS');
   const [selectedEstablishment, setSelectedEstablishment] = useState<'Hualañé' | 'Curepto' | 'Ambos' | 'TODOS'>('TODOS');
   const [selectedRange, setSelectedRange] = useState<'HOY' | '7_DIAS' | '30_DIAS' | 'TODOS'>('TODOS');
+  const [selectedRole, setSelectedRole] = useState<'Administrador' | 'Clínico' | 'No autenticado' | 'TODOS'>('TODOS');
   
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedEvent, setSelectedEvent] = useState<AuditEntry | null>(null);
@@ -287,7 +297,7 @@ export default function AuditLog() {
 
   // --- FILTERS LOGIC ---
   const filteredEvents = AUDIT_LOGS_DATA.filter(entry => {
-    // 1. Search term (user name, email, description, resource label)
+    // 1. Search term (user name, email, description, resource label, specialty)
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       const matchesSearch = 
@@ -295,9 +305,15 @@ export default function AuditLog() {
         entry.userEmail.toLowerCase().includes(term) ||
         entry.description.toLowerCase().includes(term) ||
         entry.resourceLabel.toLowerCase().includes(term) ||
-        entry.userRole.toLowerCase().includes(term);
+        entry.userRole.toLowerCase().includes(term) ||
+        entry.userSpecialty.toLowerCase().includes(term);
       
       if (!matchesSearch) return false;
+    }
+
+    // Role Filter
+    if (selectedRole !== 'TODOS' && entry.userRole !== selectedRole) {
+      return false;
     }
 
     // 2. Module
@@ -351,7 +367,7 @@ export default function AuditLog() {
   // --- PAGINATION RESET & CALCULATION ---
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedModule, selectedAction, selectedResult, selectedEstablishment, selectedRange]);
+  }, [searchTerm, selectedModule, selectedAction, selectedResult, selectedEstablishment, selectedRange, selectedRole]);
 
   const totalPages = Math.ceil(sortedEvents.length / itemsPerPage) || 1;
   const paginatedEvents = sortedEvents.slice(
@@ -362,6 +378,7 @@ export default function AuditLog() {
   // --- EXPORT SIMULATION ---
   const handleExport = () => {
     const filtersUsed: string[] = [];
+    if (selectedRole !== 'TODOS') filtersUsed.push(`Perfil: ${selectedRole}`);
     if (selectedModule !== 'TODOS') filtersUsed.push(`Módulo: ${selectedModule}`);
     if (selectedAction !== 'TODAS') filtersUsed.push(`Acción: ${selectedAction}`);
     if (selectedResult !== 'TODOS') filtersUsed.push(`Resultado: ${selectedResult}`);
@@ -485,11 +502,11 @@ export default function AuditLog() {
       <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
         
         {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-md flex flex-col flex-1 min-h-0">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
           
           {/* 5. FILTROS COMPACTOS VISIBLES INLINE */}
           <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
               
               {/* Buscador */}
               <div className="relative">
@@ -511,12 +528,26 @@ export default function AuditLog() {
                 )}
               </div>
 
+              {/* Filtro Perfil / Rol */}
+              <div className="flex flex-col">
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value as any)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-semibold text-slate-700 transition-all shadow-sm"
+                >
+                  <option value="TODOS">Perfil: Todos</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Clínico">Clínico</option>
+                  <option value="No autenticado">No autenticado</option>
+                </select>
+              </div>
+
               {/* Filtro Módulo */}
               <div className="flex flex-col">
                 <select
                   value={selectedModule}
                   onChange={(e) => setSelectedModule(e.target.value as any)}
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none transition-all shadow-sm"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-semibold text-slate-700 transition-all shadow-sm"
                 >
                   <option value="TODOS">Módulo: Todos</option>
                   <option value="LOGIN">Login</option>
@@ -533,7 +564,7 @@ export default function AuditLog() {
                 <select
                   value={selectedAction}
                   onChange={(e) => setSelectedAction(e.target.value as any)}
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none transition-all shadow-sm"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-semibold text-slate-700 transition-all shadow-sm"
                 >
                   <option value="TODAS">Acción: Todas</option>
                   <option value="LECTURA">Lectura</option>
@@ -552,7 +583,7 @@ export default function AuditLog() {
                 <select
                   value={selectedResult}
                   onChange={(e) => setSelectedResult(e.target.value as any)}
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none transition-all shadow-sm"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-semibold text-slate-700 transition-all shadow-sm"
                 >
                   <option value="TODOS">Resultado: Todos</option>
                   <option value="EXITO">Éxito</option>
@@ -567,7 +598,7 @@ export default function AuditLog() {
                 <select
                   value={selectedEstablishment}
                   onChange={(e) => setSelectedEstablishment(e.target.value as any)}
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none transition-all shadow-sm"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-semibold text-slate-700 transition-all shadow-sm"
                 >
                   <option value="TODOS">Establecimiento: Todos</option>
                   <option value="Hualañé">Hualañé</option>
@@ -581,7 +612,7 @@ export default function AuditLog() {
                 <select
                   value={selectedRange}
                   onChange={(e) => setSelectedRange(e.target.value as any)}
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none transition-all shadow-sm"
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-semibold text-slate-700 transition-all shadow-sm"
                 >
                   <option value="TODOS">Rango: Todos</option>
                   <option value="HOY">Hoy</option>
@@ -613,8 +644,8 @@ export default function AuditLog() {
                     Usuario
                   </th>
                   {/* Oculto en tablet (md) para mantener la tabla equilibrada */}
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-48 hidden lg:table-cell">
-                    Rol / Establecimiento
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-52 hidden lg:table-cell">
+                    Perfil / Establecimiento
                   </th>
                   <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-28">
                     Módulo
@@ -626,18 +657,15 @@ export default function AuditLog() {
                   <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                     Recurso Afectado
                   </th>
-                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-32">
+                  <th className="text-left px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-48">
                     Resultado
-                  </th>
-                  <th className="text-center px-4 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-24">
-                    Acción
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {paginatedEvents.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center text-sm text-gray-400">
+                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-400">
                       No se encontraron registros que coincidan con los filtros seleccionados.
                     </td>
                   </tr>
@@ -662,11 +690,12 @@ export default function AuditLog() {
                           </div>
                         </td>
                         
-                        {/* 3. Rol / establecimiento (Oculto en Tablet md) */}
+                        {/* 3. Perfil / establecimiento (Oculto en Tablet md) */}
                         <td className="px-5 py-3.5 font-sans hidden lg:table-cell">
                           <div className="flex flex-col">
-                            <span className="text-xs text-gray-700 font-medium">{entry.userRole}</span>
-                            <span className="text-[10px] text-gray-400 font-semibold">{entry.establishment}</span>
+                            <span className="text-xs text-slate-800 font-semibold">{entry.userRole}</span>
+                            <span className="text-[10px] text-slate-500 font-medium">{entry.userSpecialty}</span>
+                            <span className="text-[9px] text-gray-400 font-semibold">{entry.establishment}</span>
                           </div>
                         </td>
                         
@@ -685,27 +714,27 @@ export default function AuditLog() {
                         </td>
                         
                         {/* 6. Recurso afectado (Oculto en Tablet md) */}
-                        <td className="px-5 py-3.5 text-xs text-gray-600 font-sans truncate max-w-[200px] hidden lg:table-cell">
+                        <td className="px-5 py-3.5 text-xs text-gray-650 font-sans truncate max-w-[200px] hidden lg:table-cell">
                           {entry.resourceLabel}
                         </td>
                         
-                        {/* 7. Resultado */}
+                        {/* 7. Resultado + Detalle */}
                         <td className="px-5 py-3.5">
-                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold font-sans ${resultStyle.bg} ${resultStyle.text} ${resultStyle.border}`}>
-                            {resultStyle.icon}
-                            <span>{resultStyle.label}</span>
+                          <div className="flex items-center justify-between gap-1.5 font-sans">
+                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-semibold ${resultStyle.bg} ${resultStyle.text} ${resultStyle.border}`}>
+                              {resultStyle.icon}
+                              <span>{resultStyle.label}</span>
+                            </div>
+                            
+                            <button
+                              onClick={() => setSelectedEvent(entry)}
+                              className="inline-flex items-center gap-1 px-2 py-1 border border-slate-200 rounded hover:bg-slate-100 active:bg-slate-200 text-[10px] text-slate-700 font-semibold transition-all cursor-pointer shadow-xs"
+                              title="Ver detalle del evento"
+                            >
+                              <Eye size={12} className="text-slate-500" />
+                              <span>Detalle</span>
+                            </button>
                           </div>
-                        </td>
-
-                        {/* 13. Acción de detalle */}
-                        <td className="px-4 py-3.5 text-center font-sans">
-                          <button
-                            onClick={() => setSelectedEvent(entry)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1 border border-slate-200 rounded-md text-xs text-slate-700 hover:bg-slate-100 active:bg-slate-200 transition-all font-semibold font-sans cursor-pointer"
-                          >
-                            <Eye size={13} />
-                            <span>Ver detalle</span>
-                          </button>
                         </td>
                       </tr>
                     );
@@ -736,6 +765,7 @@ export default function AuditLog() {
                       <div>
                         <h4 className="text-xs font-bold text-gray-900">{entry.userName}</h4>
                         <p className="text-[10px] text-gray-400 font-mono">{entry.userEmail} • {entry.userRole}</p>
+                        <p className="text-[9px] text-slate-500 font-medium">{entry.userSpecialty} ({entry.establishment})</p>
                       </div>
 
                       <div className="flex items-center gap-2">
@@ -856,14 +886,27 @@ export default function AuditLog() {
 
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Usuario Autor</span>
-                      <p className="text-xs font-semibold text-gray-800">{selectedEvent.userName}</p>
-                      <p className="text-[11px] font-mono text-gray-450">{selectedEvent.userEmail}</p>
+                      <p className="text-xs font-semibold text-gray-900">{selectedEvent.userName}</p>
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rol / Establecimiento</span>
-                      <p className="text-xs font-semibold text-gray-800">{selectedEvent.userRole}</p>
-                      <p className="text-[11px] font-medium text-slate-400">Establecimiento: {selectedEvent.establishment}</p>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Correo Electrónico</span>
+                      <p className="text-xs font-mono font-semibold text-slate-600">{selectedEvent.userEmail}</p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rol de Sistema</span>
+                      <p className="text-xs font-bold text-slate-800">{selectedEvent.userRole}</p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Profesionalidad</span>
+                      <p className="text-xs font-semibold text-slate-700">{selectedEvent.userSpecialty}</p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Establecimiento</span>
+                      <p className="text-xs font-semibold text-slate-705">{selectedEvent.establishment}</p>
                     </div>
 
                     <div className="space-y-1">
@@ -873,7 +916,7 @@ export default function AuditLog() {
 
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Dispositivo / Agente</span>
-                      <p className="text-xs text-gray-600 truncate" title={selectedEvent.device}>{selectedEvent.device}</p>
+                      <p className="text-xs text-slate-600 truncate" title={selectedEvent.device}>{selectedEvent.device}</p>
                     </div>
 
                     <div className="space-y-1">
@@ -904,18 +947,23 @@ export default function AuditLog() {
                     </p>
                   </div>
 
-                  {/* Detalle Técnico */}
+                  {/* Referencia técnica */}
                   <div className="border-t border-gray-100 pt-3 space-y-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Detalle Técnico (Query / API Request / Log)</span>
-                    <pre className="mt-1 bg-slate-900 border border-slate-950 p-3.5 rounded-lg text-emerald-400 text-xs font-mono overflow-x-auto max-h-36">
-                      <code>{selectedEvent.technicalDetail || 'No se registraron parámetros o queries SQL adicionales de bajo nivel.'}</code>
-                    </pre>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Referencia técnica</span>
+                    <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-lg text-xs font-mono text-slate-600 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <div>
+                        <span className="font-bold text-slate-650">Código Interno:</span> <span className="text-slate-900 font-bold">{selectedEvent.systemReference || 'LOG-AUDIT-N/A'}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-450 font-sans font-medium bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">
+                        Detalle técnico disponible en logs internos del sistema.
+                      </span>
+                    </div>
                   </div>
 
                   {/* Advertencia de solo lectura */}
                   <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 text-amber-800 rounded-md border border-amber-100 text-[11px] font-semibold font-sans justify-center mt-3">
                     <ShieldAlert size={14} className="text-amber-500" />
-                    <span>Registro de seguridad inmutable. No se permite realizar modificaciones ni eliminaciones desde esta consola.</span>
+                    <span>Registro de seguridad inmutable. No se permite realizar modificaciones ni eliminaciones desde esta consola. (Registro de solo lectura)</span>
                   </div>
 
                 </div>

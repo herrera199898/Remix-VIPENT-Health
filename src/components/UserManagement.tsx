@@ -418,13 +418,13 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#f8fafc] overflow-y-auto min-h-0 relative px-2 py-1">
+    <div id="vipent-user-management-view" className="flex-1 flex flex-col min-h-0 bg-gray-50/30 overflow-y-auto">
       {/* Toast Notification Bar */}
       {notification && (
         <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl max-w-md transition-all animate-bounce ${
-          notification.type === 'success' ? 'bg-emerald-50 text-emerald-900 border-emerald-200' :
-          notification.type === 'warning' ? 'bg-amber-50 text-amber-900 border-amber-200' :
-          'bg-blue-50 text-blue-900 border-blue-200'
+          notification.type === 'success' ? 'bg-emerald-50 text-emerald-950 border-emerald-205' :
+          notification.type === 'warning' ? 'bg-amber-50 text-amber-955 border-amber-205' :
+          'bg-blue-50 text-blue-955 border-blue-205'
         }`}>
           {notification.type === 'success' ? (
                 <CheckCircle className="text-emerald-500 w-5 h-5 shrink-0" />
@@ -437,107 +437,110 @@ export default function UserManagement() {
       )}
 
       {/* Header compact view */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-gray-200 gap-4">
+      <div className="p-6 md:p-8 bg-white border-b border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Shield className="text-brand-blue w-6 h-6" />
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">Gestión de usuarios</h1>
-          </div>
-          <p className="text-xs text-slate-500 font-medium">Administración de accesos, roles y establecimientos del sistema VIPENT</p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+            <Shield className="text-brand-blue" size={24} />
+            <span>Gestión de usuarios</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Administración de accesos, roles y establecimientos del sistema VIPENT
+          </p>
         </div>
         <button 
           onClick={handleOpenCreateForm}
-          className="bg-brand-blue hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer scale-100 hover:scale-102 active:scale-98 shrink-0"
+          className="bg-brand-blue hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer scale-100 hover:scale-102 active:scale-98 shrink-0 animate-pulse"
         >
           <UserPlus size={15} />
           Nuevo usuario
         </button>
       </div>
 
-      {/* Search and Filters panel */}
-      <div className="bg-white border border-gray-200 rounded-xl p-3.5 my-4 flex flex-col gap-3 shadow-xs">
-        <div className="flex items-center gap-2 text-slate-400 border-b border-gray-100 pb-2">
-          <SlidersHorizontal size={14} className="text-slate-500" />
-          <span className="text-[10px] uppercase font-bold tracking-wider leading-none">Filtros de Búsqueda</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Subfilter search bar */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Buscar por nombre, correo o RUT" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-brand-blue"
-            />
+      <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
+        
+        {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
+          
+          {/* Search and Filters panel */}
+          <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Subfilter search bar */}
+              <div className="relative">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Buscar por nombre, correo o RUT" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue font-semibold text-slate-705 placeholder-slate-400"
+                />
+              </div>
+
+              {/* Subfilter Role */}
+              <div>
+                <select 
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue font-bold text-slate-700 cursor-pointer"
+                >
+                  <option value="Todos">Rol: Todos ({usersList.length})</option>
+                  <option value="Administrador">Administrador</option>
+                  <option value="Clínico">Clínico</option>
+                </select>
+              </div>
+
+              {/* Subfilter Establishment */}
+              <div>
+                <select 
+                  value={selectedEstablishment}
+                  onChange={(e) => setSelectedEstablishment(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue font-bold text-slate-700 cursor-pointer"
+                >
+                  <option value="Todos">Sede: Todos</option>
+                  <option value="Hualañé">Hualañé</option>
+                  <option value="Curepto">Curepto</option>
+                  <option value="Ambos">Ambos</option>
+                </select>
+              </div>
+
+              {/* Subfilter States */}
+              <div>
+                <select 
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue font-bold text-slate-700 cursor-pointer"
+                >
+                  <option value="Todos">Estado: Todos</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Bloqueado">Bloqueado</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          {/* Subfilter Role */}
-          <div>
-            <select 
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-slate-700 focus:outline-none focus:bg-white focus:ring-1 focus:ring-brand-blue"
-            >
-              <option value="Todos">Rol: Todos ({usersList.length})</option>
-              <option value="Administrador">Administrador</option>
-              <option value="Clínico">Clínico</option>
-            </select>
-          </div>
-
-          {/* Subfilter Establishment */}
-          <div>
-            <select 
-              value={selectedEstablishment}
-              onChange={(e) => setSelectedEstablishment(e.target.value)}
-              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-slate-700 focus:outline-none focus:bg-white focus:ring-1 focus:ring-brand-blue"
-            >
-              <option value="Todos">Establecimiento: Todos</option>
-              <option value="Hualañé">Hualañé</option>
-              <option value="Curepto">Curepto</option>
-              <option value="Ambos">Ambos</option>
-            </select>
-          </div>
-
-          {/* Subfilter States */}
-          <div>
-            <select 
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-slate-700 focus:outline-none focus:bg-white focus:ring-1 focus:ring-brand-blue"
-            >
-              <option value="Todos">Estado: Todos</option>
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-              <option value="Pendiente">Pendiente</option>
-              <option value="Bloqueado">Bloqueado</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Table card view */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs flex-1 min-h-[400px] flex flex-col">
-        {/* Desktop View */}
-        <div className="hidden md:block overflow-x-auto flex-1 min-h-0">
-          <table className="w-full border-collapse text-left text-xs text-gray-700">
-            <thead className="bg-[#f8fafc] border-b border-gray-200">
-              <tr>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[25%]">Usuario</th>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[12%]">Rol</th>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[20%]">Especialidad / Profesión</th>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[15%]">Establecimiento</th>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[10%] text-center">Estado</th>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[13%]">Último Acceso</th>
-                <th className="py-3 px-4 font-bold text-slate-500 uppercase tracking-wider text-[10px] w-[5%] text-right pr-6">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* User Profile column */}
+          {/* Table Container */}
+          <div className="flex-1 overflow-auto">
+            {/* Desktop View */}
+            <div className="hidden md:block overflow-x-auto flex-1 min-h-0">
+              <table className="w-full border-collapse text-left text-xs text-gray-700">
+                <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
+                  <tr>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[25%]">Usuario</th>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[12%]">Rol</th>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[20%]">Especialidad / Profesión</th>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[15%]">Establecimiento</th>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[10%] text-center">Estado</th>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[13%]">Último Acceso</th>
+                    <th className="py-3.5 px-4 font-bold text-slate-500 uppercase tracking-wider text-xs w-[5%] text-right pr-6 font-bold">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user) => (
+                      <tr key={user.id} className="hover:bg-slate-50/70 transition-colors">
+                        {/* User Profile column */}
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
                         {/* Avatar */}
@@ -787,6 +790,8 @@ export default function UserManagement() {
           )}
         </div>
       </div>
+      </div> {/* closes CONTAINER PRINCIPAL */}
+      </div> {/* closes padding container */}
 
       {/* FOOTER */}
       <div className="mt-4 pb-2 text-[10px] text-slate-400 font-mono uppercase text-right leading-none">
