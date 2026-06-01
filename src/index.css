@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #1e293b;
+  --color-brand-blue-light: #3b82f6;
+  --color-brand-red: #ef4444;
+  --color-calendar-bg: #f8fafc;
+  --color-sidebar-active-bg: #bfdbfe;
+  --color-sidebar-active-text: #1e3a8a;
+}
+
+@layer base {
+  body {
+    @apply bg-[#f3f4f6] text-gray-800 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+  }
+}
+
+/* Fix for REMReport sticky headers border bleed */
+.custom-scrollbar table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-top: 1px solid #9ca3af; /* gray-400 */
+  border-left: 1px solid #9ca3af;
+}
+
+.custom-scrollbar th, .custom-scrollbar td {
+  border-right: 1px solid #9ca3af !important;
+  border-bottom: 1px solid #9ca3af !important;
+  border-top: none !important;
+  border-left: none !important;
+}
