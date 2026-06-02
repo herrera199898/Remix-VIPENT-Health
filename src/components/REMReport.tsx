@@ -3,7 +3,8 @@ import {
   RefreshCcw, ChevronLeft, ChevronRight, 
   MapPin, Calendar, Clock, ClipboardCheck, AlertTriangle, 
   FileSpreadsheet, Printer, Search, Database, UserCheck, 
-  Eye, CornerDownRight, CheckCircle, ArrowUpRight, HelpCircle
+  Eye, CornerDownRight, CheckCircle, ArrowUpRight, HelpCircle,
+  FileText
 } from 'lucide-react';
 import { PATIENTS_MOCK } from '../types';
 
@@ -369,17 +370,20 @@ export default function REMReport({ onNavigate }: REMReportProps) {
     { key: 'sin_compensacion', title: 'Pacientes con HTA/DM2 sin dato de compensación', count: 24, severity: 'Media', color: 'text-amber-650 border-amber-200 bg-amber-50' },
     { key: 'duplicados', title: 'Registros duplicados', count: 2, severity: 'Alta', color: 'text-red-650 border-red-200 bg-red-50' },
     { key: 'sin_establecimiento', title: 'Pacientes sin establecimiento asociado', count: 6, severity: 'Media', color: 'text-amber-650 border-amber-200 bg-amber-50' },
-    { key: 'examenes_vigencia', title: 'Exámenes o vigencias incompletas', count: 10, severity: 'Baja', color: 'text-slate-500 border-slate-200 bg-slate-50' },
+    { key: 'examenes_vigencia', title: 'Exámenes o vigencias incompletas', count: 10, severity: 'Baja', color: 'bg-slate-50 text-slate-500 border-slate-200' },
   ];
 
   return (
     <div className="flex-1 flex flex-col min-h-0 text-left">
       
       {/* 1. Simplified Header Area with Action Buttons */}
-      <div className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
+      <div className="p-6 md:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 shrink-0 mb-6">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-black text-gray-800 tracking-tight">Reporte REM-P4</h1>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+              <FileText className="text-brand-blue" size={24} />
+              <span>Reporte REM-P4</span>
+            </h1>
             <span className={`px-2.5 py-0.5 text-[10px] uppercase font-extrabold tracking-wider border rounded-full ${getEstadoBadgeStyle(selectedEstado)}`}>
               {selectedEstado}
             </span>
@@ -388,7 +392,7 @@ export default function REMReport({ onNavigate }: REMReportProps) {
           {/* Quick interactive on-demand elements right next to the subtext */}
           <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-slate-500 font-semibold">
             <span>Control consolidado de población PSCV</span>
-            <span className="text-slate-300">|</span>
+            <span className="text-slate-300 font-normal">|</span>
             <button 
               onClick={() => setShowInfoModal(true)} 
               className="text-blue-600 hover:text-blue-800 font-extrabold hover:underline flex items-center gap-1 cursor-pointer transition-colors"
@@ -397,7 +401,7 @@ export default function REMReport({ onNavigate }: REMReportProps) {
               <Database size={12} className="text-blue-500" />
               Información del reporte
             </button>
-            <span className="text-slate-300">|</span>
+            <span className="text-slate-300 font-normal">|</span>
             <button 
               onClick={() => setShowValidationModal(true)} 
               className="text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-0.5 rounded-lg font-bold flex items-center gap-1 cursor-pointer transition-all hover:scale-103 active:scale-97 text-[11px]"
@@ -414,7 +418,7 @@ export default function REMReport({ onNavigate }: REMReportProps) {
           <button 
             onClick={handleActualizarDatos}
             disabled={isUpdating}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-250 rounded-lg text-xs font-bold text-gray-700 uppercase tracking-tight transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-250 rounded-lg text-xs font-bold text-gray-700 uppercase tracking-tight transition-colors disabled:opacity-50 cursor-pointer"
           >
             <RefreshCcw size={13} className={`text-blue-500 ${isUpdating ? 'animate-spin' : ''}`} />
             {isUpdating ? 'Sincronizando...' : 'Actualizar datos'}
@@ -423,7 +427,7 @@ export default function REMReport({ onNavigate }: REMReportProps) {
           <button 
             onClick={handleValidarReporte}
             disabled={isValidating}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-xs font-bold text-indigo-700 uppercase tracking-tight transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-xs font-bold text-indigo-700 uppercase tracking-tight transition-colors cursor-pointer"
           >
             <ClipboardCheck size={13} className="text-indigo-500" />
             {isValidating ? 'Validando...' : 'Validar reporte'}
@@ -432,7 +436,7 @@ export default function REMReport({ onNavigate }: REMReportProps) {
           <button 
             onClick={handleExportarExcel}
             disabled={isExporting}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-700 uppercase tracking-tight transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-bold text-emerald-700 uppercase tracking-tight transition-colors cursor-pointer"
           >
             <FileSpreadsheet size={13} className="text-emerald-600" />
             {isExporting ? 'Procesando...' : 'Exportar Excel'}
@@ -440,7 +444,7 @@ export default function REMReport({ onNavigate }: REMReportProps) {
 
           <button 
             onClick={handleImprimir}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs font-bold text-gray-700 uppercase tracking-tight transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-xs font-bold text-gray-700 uppercase tracking-tight transition-colors cursor-pointer"
           >
             <Printer size={13} className="text-slate-600" />
             Vista Impresión

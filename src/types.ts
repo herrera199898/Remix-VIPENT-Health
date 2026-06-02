@@ -407,3 +407,12 @@ export function formatInputTimeToDisplay(timeStr: string | undefined): string {
   return `${hours.toString().padStart(2, '0')}:${minutesStr || '00'} ${meridian}`;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'Medico' | 'Enfermera' | 'Admin';
+  status: 'Active' | 'Inactive';
+}
+
+

@@ -59,7 +59,7 @@ export default function DayView({ appointments, currentDate, onManageAppointment
   };
 
   return (
-    <div className="flex-1 bg-white border border-gray-200 rounded-b-lg flex flex-col overflow-y-auto">
+    <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col overflow-y-auto">
       
       {/* Date Header */}
       <div className="bg-slate-50/80 px-6 py-4 flex justify-between items-center border-b border-gray-100 shrink-0">

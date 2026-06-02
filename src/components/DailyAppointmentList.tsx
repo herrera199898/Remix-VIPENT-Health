@@ -57,9 +57,50 @@ export default function DailyAppointmentList({
     }
   };
 
+  const formatShortName = (name: string): string => {
+    if (!name) return '';
+    const cleanName = name.trim();
+    const words = cleanName.split(/\s+/);
+    
+    let formatted = '';
+    if (words.length <= 1) {
+      formatted = cleanName;
+    } else {
+      // Checklist for Chilean format: PATERNO MATERNO NOMBRES
+      // e.g., ABUD VALENZUELA CRISTIAN ALEJANDRO -> CRISTIAN ABUD
+      const isUppercaseFormat = cleanName === cleanName.toUpperCase() && words.length >= 3;
+      
+      if (isUppercaseFormat) {
+        const lastName = words[0];
+        const firstName = words[2];
+        if (firstName && lastName) {
+          formatted = `${firstName} ${lastName}`;
+        } else {
+          formatted = cleanName;
+        }
+      } else {
+        // Otherwise, standard GIVEN_NAME SURNAME (e.g., María López)
+        const firstName = words[0];
+        const lastName = words[1] || words[words.length - 1];
+        formatted = `${firstName} ${lastName}`;
+      }
+    }
+    
+    if (!formatted) return '';
+    // Convert each to first letter uppercase, rest lowercase
+    return formatted
+      .split(/\s+/)
+      .map(word => {
+        if (!word) return '';
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  };
+
   const truncatePatientName = (name: string) => {
-    if (name.length > 25) return name.substring(0, 23) + '...';
-    return name;
+    const formatted = formatShortName(name);
+    if (formatted.length > 25) return formatted.substring(0, 23) + '...';
+    return formatted;
   };
 
   const getStatusBadge = (status: string) => {
@@ -120,10 +161,10 @@ export default function DailyAppointmentList({
   };
 
   return (
-    <div id="vipent-appointments-list-view" className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+    <div id="vipent-appointments-list-view" className="flex-1 flex flex-col min-h-0 bg-transparent space-y-6">
       
       {/* Header */}
-      <div className="p-6 md:p-8 bg-white border-b border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0">
+      <div className="p-6 md:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0 font-sans animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
             <Calendar className="text-brand-blue" size={24} />
@@ -140,7 +181,7 @@ export default function DailyAppointmentList({
         </div>
       </div>
 
-      <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         
         {/* Top Agenda Indicators */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -186,10 +227,10 @@ export default function DailyAppointmentList({
         </div>
 
         {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
           
           {/* Filters Panel */}
-          <div className="p-4 border-b border-gray-205 bg-gray-50/55 flex flex-col md:flex-row gap-3">
+          <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col md:flex-row gap-3">
             
             {/* Text Search */}
             <div className="flex-1 relative">
@@ -199,7 +240,7 @@ export default function DailyAppointmentList({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar paciente por nombre o RUT..."
-                className="w-full pl-9 pr-4 py-1.5 bg-white border border-gray-350 rounded-lg text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-brand-blue/30 focus:border-brand-blue placeholder:text-gray-400 text-slate-705"
+                className="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue outline-none transition-all shadow-2xs font-semibold text-slate-705 placeholder-slate-400"
               />
               {searchTerm && (
                 <button 
@@ -216,7 +257,7 @@ export default function DailyAppointmentList({
               <select
                 value={filterProfessional}
                 onChange={(e) => setFilterProfessional(e.target.value)}
-                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue transition-all shadow-sm"
               >
                 <option value="ALL">TODOS LOS PROFESIONALES</option>
                 <option value="MEDICO">MÉDICO</option>
@@ -231,7 +272,7 @@ export default function DailyAppointmentList({
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue transition-all shadow-sm"
               >
                 <option value="ALL">TODOS LOS ESTADOS</option>
                 <option value="PENDIENTE">PENDIENTE</option>
@@ -250,7 +291,7 @@ export default function DailyAppointmentList({
               <select
                 value={filterEstablishment}
                 onChange={(e) => setFilterEstablishment(e.target.value)}
-                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                className="w-full bg-white border border-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 cursor-pointer appearance-none focus:outline-none focus:ring-1 focus:ring-brand-blue focus:border-brand-blue transition-all shadow-sm"
               >
                 <option value="ALL">TODAS LAS SEDES</option>
                 <option value="Hualañé">HUALAÑÉ</option>
@@ -260,18 +301,18 @@ export default function DailyAppointmentList({
             </div>
           </div>
 
-                    {/* Table Container */}
+          {/* Table Container */}
           <div className="flex-1 overflow-auto">
             <table className="w-full text-left border-collapse table-fixed">
-              <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
-                <tr>
-                  <th className="py-3 px-4 w-[100px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Hora</th>
-                  <th className="py-3 px-4 w-[240px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Paciente</th>
-                  <th className="py-3 px-4 w-[160px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Atención PSCV</th>
-                  <th className="py-3 px-4 w-[120px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Sede</th>
-                  <th className="py-3 px-4 w-[180px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Profesional</th>
-                  <th className="py-3 px-4 w-[130px] text-[10px] font-bold text-slate-500 uppercase tracking-wider">Estado</th>
-                  <th className="py-3 px-4 w-[100px] text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Acciones</th>
+              <thead className="sticky top-0 bg-gray-50 border-b border-gray-250 z-10 w-full">
+                <tr className="font-sans">
+                  <th className="px-5 py-3 w-[100px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-left">Hora</th>
+                  <th className="px-5 py-3 w-[240px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-left">Paciente</th>
+                  <th className="px-5 py-3 w-[160px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-left">Atención PSCV</th>
+                  <th className="px-5 py-3 w-[120px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-left">Sede</th>
+                  <th className="px-5 py-3 w-[180px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-left">Profesional</th>
+                  <th className="px-5 py-3 w-[130px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-left">Estado</th>
+                  <th className="px-5 py-3 w-[100px] text-[10px] font-bold text-gray-500 uppercase tracking-wider text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -283,65 +324,65 @@ export default function DailyAppointmentList({
               </tr>
             ) : (
               filteredAppointments.map((app) => (
-                <tr key={app.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={app.id} className="hover:bg-slate-50/50 transition-all font-mono align-middle">
                   
                   {/* Hora */}
-                  <td className="py-3.5 px-4 text-xs font-mono font-bold text-slate-700">
+                  <td className="px-5 py-3.5 text-xs text-medium text-gray-500 font-sans whitespace-nowrap">
                     {app.time.replace(' AM', '').replace(' PM', '')}
                   </td>
                   
                   {/* Paciente Info */}
-                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                  <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                     <div className="flex flex-col">
-                      <span className="text-sm font-bold text-slate-900 leading-tight">
+                      <span className="text-xs font-semibold text-gray-900 block leading-tight">
                         {truncatePatientName(app.patientName)}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-bold mt-1 leading-none font-mono">
-                        {app.rut}
+                      <span className="text-[10px] text-slate-400 font-mono tracking-tight mt-0.5">
+                        RUT: {app.rut}
                       </span>
                     </div>
                   </td>
                   
                   {/* Tipo de atención */}
-                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                  <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none bg-sky-50 text-sky-700 border-sky-200">
                       {app.attentionType || 'Control General'}
                     </span>
                   </td>
                   
                   {/* Establecimiento */}
-                  <td className="py-3.5 px-4 text-xs text-slate-700">
-                    <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500">
-                      <MapPin size={12} className="text-slate-400" />
-                      {app.establishment || 'Hualañé'}
+                  <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-805 font-semibold">
+                      <MapPin size={13} className="text-slate-400 shrink-0" />
+                      <span>{app.establishment || 'Hualañé'}</span>
                     </div>
                   </td>
                   
                   {/* Profesional */}
-                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                  <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-slate-800 uppercase tracking-tight">
+                      <span className="text-xs font-semibold text-slate-800">
                         {app.professionalName}
                       </span>
-                      <span className="text-[8.5px] font-extrabold text-slate-400 mt-0.5 tracking-wider uppercase">
+                      <span className="text-[9px] text-slate-450 font-medium">
                         {app.role === 'MEDICO' ? 'Médico Cirujano' : app.role === 'ENFERMERA' ? 'Enfermera Universitaria' : 'Nutricionista'}
                       </span>
                     </div>
                   </td>
                   
                   {/* Estado Badge */}
-                  <td className="py-3.5 px-4 text-xs text-slate-700">
+                  <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${getStatusBadge(app.status)}`}>
                       {app.status}
                     </span>
                   </td>
                   
                   {/* Actions Dropdown Controller */}
-                  <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                  <td className="px-5 py-3.5 text-center pr-6 relative" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center relative">
                       <button 
                         onClick={() => setActiveMenuId(activeMenuId === app.id ? null : app.id)}
-                        className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer shrink-0"
                       >
                         <BulletListSvgIcon size={15} />
                       </button>
@@ -427,10 +468,10 @@ export default function DailyAppointmentList({
       </div> {/* closes padding container */}
 
       {/* Footer / Back Button */}
-      <div className="p-4 px-6 border-t border-gray-100 flex justify-end shrink-0 bg-slate-55 bg-slate-50">
+      <div className="flex justify-end shrink-0">
         <button 
           onClick={onBack}
-          className="px-5 py-2 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800 border border-slate-200 shadow-sm text-xs font-bold uppercase tracking-wider rounded-lg transition-all flex items-center gap-2"
+          className="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800 border border-gray-200 shadow-sm text-xs font-bold uppercase tracking-wider rounded-lg transition-all flex items-center gap-2 cursor-pointer"
         >
           <ArrowLeft size={14} className="text-slate-400" />
           Volver al Calendario

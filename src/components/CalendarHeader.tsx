@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Users, Search, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Users, Search, X, CalendarDays } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CalendarHeaderProps {
@@ -63,16 +63,82 @@ export default function CalendarHeader({
   const blanks = Array.from({ length: firstDay }, (_, i) => i);
 
   return (
-    <div className="bg-white px-6 py-4 flex items-center justify-between border border-gray-200 border-b-0 rounded-t-lg shadow-sm overflow-visible z-20 relative">
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-6">
+    <div className="p-6 md:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col xl:flex-row xl:items-center gap-6 shrink-0 font-sans z-20 relative">
+      
+      {/* 1. Left side: Title */}
+      <div className="flex-shrink-0">
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+          <CalendarDays className="text-brand-blue" size={24} />
+          <span>Gestión de citas médicas</span>
+        </h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Control, agenda y asignación de citas para pacientes cardiovasculares
+        </p>
+      </div>
+
+      {/* 2. Middle: Selected Day Info & Manage Button */}
+      <div className="flex-1 flex justify-center min-w-0">
+          <AnimatePresence mode="wait">
+            {selectedDateStr && selectedDateObj ? (
+              <motion.div
+                key="selected"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="bg-gray-50 border border-gray-100 rounded-xl px-5 py-2.5 shadow-sm flex items-center gap-4 md:gap-6"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col">
+                    <h3 className="text-sm font-bold text-gray-900 capitalize leading-tight">
+                      {daysOfWeek[selectedDateObj.getDay()]}
+                    </h3>
+                    <p className="text-xs text-gray-500 font-medium leading-tight">
+                      {selectedDateObj.getDate()} de {months[selectedDateObj.getMonth()]}
+                    </p>
+                  </div>
+                  <div className="w-px h-8 bg-gray-200 hidden md:block"></div>
+                  <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-gray-100 shadow-sm">
+                    <Users size={16} className="text-emerald-500 hidden md:block" />
+                    <span className="text-sm font-bold text-gray-700 whitespace-nowrap">
+                      {appointmentsCount} citas
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setView('LISTADO')}
+                  className="px-4 py-2 bg-brand-blue hover:bg-blue-900 text-white text-sm font-bold rounded-lg shadow-sm transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  Gestionar Citas
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="bg-gray-50/50 border border-dashed border-gray-200 rounded-xl px-6 py-4 flex flex-col items-center justify-center text-gray-400 min-w-[280px]"
+              >
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CalendarIcon size={16} />
+                  <span>Seleccione un día para gestionar citas</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+      </div>
+
+      {/* 3. Right side: Calendar controls & View Toggles */}
+      <div className="flex-shrink-0 flex flex-col items-end gap-3">
+        <div className="flex items-center gap-3">
           <div className="relative">
             <button 
               onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-              className="bg-brand-blue hover:bg-blue-900 text-white px-8 py-2.5 rounded-md font-bold text-sm shadow-md tracking-wide uppercase min-w-[120px] text-center flex items-center justify-center gap-2 transition-colors"
+              className="bg-brand-blue hover:bg-blue-900 text-white px-5 py-2.5 rounded-md font-bold text-sm shadow-sm tracking-wide uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <CalendarIcon size={16} className="opacity-80" />
-              {currentMonthName}
+              <span className="min-w-[100px] text-left">{currentMonthName} {currentYear}</span>
             </button>
             
             <AnimatePresence>
@@ -81,7 +147,7 @@ export default function CalendarHeader({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-0 z-50 min-w-[280px]"
+                  className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-0 z-50 min-w-[280px]"
                 >
                   <div className="bg-brand-blue/5 border-b border-brand-blue/10 p-3 flex items-center justify-between rounded-t-xl">
                     <span className="text-xs font-bold text-gray-700 flex items-center gap-2">
@@ -124,17 +190,14 @@ export default function CalendarHeader({
                     <div className="grid grid-cols-7 gap-1 text-center">
                       {blanks.map(b => <div key={`blank-${b}`} />)}
                       {days.map(d => {
-                        // isSelected is whether it's the exact day currently viewed/selected
                         let isSelected = false;
                         if (view === 'MES') {
-                          // Month view uses selectedDateObj logically
                           if (selectedDateObj) {
                             isSelected = selectedDateObj.getFullYear() === miniYear && 
                                          selectedDateObj.getMonth() === miniMonth && 
                                          selectedDateObj.getDate() === d;
                           }
                         } else {
-                           // Day/Week views use currentDate logically
                            isSelected = currentDate.getFullYear() === miniYear && 
                                         currentDate.getMonth() === miniMonth && 
                                         currentDate.getDate() === d;
@@ -164,108 +227,40 @@ export default function CalendarHeader({
               )}
             </AnimatePresence>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-gray-700 font-bold text-base tracking-tight">{currentYear}</span>
-            <div className="flex gap-1.5 ml-2">
-              <button 
-                onClick={onPrev}
-                className="bg-brand-blue hover:bg-slate-700 text-white w-9 h-9 rounded-md flex items-center justify-center transition-all active:scale-95 shadow-sm"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button 
-                onClick={onNext}
-                className="bg-brand-blue hover:bg-slate-700 text-white w-9 h-9 rounded-md flex items-center justify-center transition-all active:scale-95 shadow-sm"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
+
+          <div className="flex gap-1">
+            <button 
+              onClick={onPrev}
+              className="bg-brand-blue hover:bg-blue-900 text-white w-9 h-9 rounded-md flex items-center justify-center transition-all active:scale-95 shadow-sm cursor-pointer"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button 
+              onClick={onNext}
+              className="bg-brand-blue hover:bg-blue-900 text-white w-9 h-9 rounded-md flex items-center justify-center transition-all active:scale-95 shadow-sm cursor-pointer"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
         </div>
-
-        <div className="flex gap-2.5">
-          <button
-            onClick={() => setView('MES')}
-            className={`px-8 py-2.5 text-xs font-black rounded-md shadow-sm border transition-all ${
-              view === 'MES'
-                ? 'bg-brand-blue-light text-white border-brand-blue-light'
-                : 'bg-brand-blue text-white border-brand-blue hover:bg-slate-700'
-            }`}
-          >
-            MES
-          </button>
-          <button
-            onClick={() => setView('SEMANA')}
-            className={`px-8 py-2.5 text-xs font-black rounded-md shadow-sm border transition-all ${
-              view === 'SEMANA'
-                ? 'bg-brand-blue-light text-white border-brand-blue-light'
-                : 'bg-brand-blue text-white border-brand-blue hover:bg-slate-700'
-            }`}
-          >
-            SEMANA
-          </button>
-          <button
-            onClick={() => setView('DÍA')}
-            className={`px-8 py-2.5 text-xs font-black rounded-md shadow-sm border transition-all ${
-              view === 'DÍA'
-                ? 'bg-brand-blue-light text-white border-brand-blue-light'
-                : 'bg-brand-blue text-white border-brand-blue hover:bg-slate-700'
-            }`}
-          >
-            DÍA
-          </button>
+        
+        <div className="flex gap-2">
+          {['MES', 'SEMANA', 'DÍA'].map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v as any)}
+              className={`px-6 py-1.5 text-xs font-black rounded-md shadow-sm border transition-colors cursor-pointer ${
+                view === v
+                  ? 'bg-blue-50 text-brand-blue border-blue-200'
+                  : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+              }`}
+            >
+              {v}
+            </button>
+          ))}
         </div>
       </div>
-
-      <div className="flex-1 max-w-sm ml-8 h-full flex justify-end">
-        <AnimatePresence mode="wait">
-          {selectedDateStr && selectedDateObj ? (
-            <motion.div
-              key="selected"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="bg-gray-50 border border-gray-100 rounded-xl p-4 w-full shadow-sm flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 capitalize">
-                    {daysOfWeek[selectedDateObj.getDay()]}
-                  </h3>
-                  <p className="text-xs text-gray-500 font-medium">
-                    {selectedDateObj.getDate()} de {months[selectedDateObj.getMonth()]}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 bg-white px-2.5 py-1 rounded-md border border-gray-100 shadow-sm">
-                  <Users size={14} className="text-emerald-500" />
-                  <span className="text-xs font-bold text-gray-700">
-                    {appointmentsCount} citas
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => setView('LISTADO')}
-                className="w-full py-2 bg-brand-blue hover:bg-blue-900 text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
-              >
-                Gestionar Citas Médicas
-              </button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="bg-gray-50/50 border border-dashed border-gray-200 rounded-xl p-4 w-full h-full flex items-center justify-center text-gray-400"
-            >
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <CalendarIcon size={16} />
-                <span>Seleccione un día</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      
     </div>
   );
 }

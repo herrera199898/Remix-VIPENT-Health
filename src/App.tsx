@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { CalendarDays } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import CalendarHeader from './components/CalendarHeader';
 import MonthView from './components/MonthView';
@@ -15,6 +16,7 @@ import REMReport from './components/REMReport';
 import UserProfile from './components/UserProfile';
 import AuditLog from './components/AuditLog';
 import UserManagement from './components/UserManagement';
+import UserManagementV2 from './components/UserManagementV2';
 import Dashboard from './components/Dashboard';
 import PatientList from './components/PatientList';
 import PatientDetails from './components/PatientDetails';
@@ -22,13 +24,250 @@ import PatientEdit from './components/PatientEdit';
 import AppointmentModal from './components/AppointmentModal';
 import Login from './components/Login';
 import PatientAppointmentManagementModal from './components/PatientAppointmentManagementModal';
-import { APPOINTMENTS_MOCK, Patient, Appointment, parseDisplayTimeToInput, formatInputTimeToDisplay, PATIENTS_MOCK } from './types';
+import { APPOINTMENTS_MOCK, Patient, Appointment, parseDisplayTimeToInput, formatInputTimeToDisplay, PATIENTS_MOCK, User } from './types';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('is_authenticated') === 'true';
   });
-  const [view, setView] = useState<'DASHBOARD' | 'MES' | 'SEMANA' | 'DÍA' | 'LISTADO' | 'REPORTE_REM' | 'USER_PROFILE' | 'AUDIT_LOG' | 'PACIENTES' | 'PACIENTE_DETALLE' | 'PACIENTE_EDICION' | 'USUARIOS'>('DASHBOARD');
+  const [view, setView] = useState<'DASHBOARD' | 'MES' | 'SEMANA' | 'DÍA' | 'LISTADO' | 'REPORTE_REM' | 'USER_PROFILE' | 'AUDIT_LOG' | 'PACIENTES' | 'PACIENTE_DETALLE' | 'PACIENTE_EDICION' | 'USUARIOS' | 'USUARIOS_V2'>('DASHBOARD');
+  const [usersV2, setUsersV2] = useState<User[]>(() => {
+    const saved = localStorage.getItem('vipent_users_mock');
+    let mockUsers: any[] = [];
+    if (saved) {
+      try {
+        mockUsers = JSON.parse(saved);
+      } catch (e) {
+        console.error("Error parsing vipent_users_mock in V2", e);
+      }
+    }
+    
+    if (!mockUsers || mockUsers.length === 0) {
+      mockUsers = [
+        {
+          id: 'u-1',
+          fullName: 'Sofía Alarcón Peña',
+          email: 'salarcon@vipent.cl',
+          rut: '14.892.428-K',
+          role: 'Administrador',
+          specialty: 'Director de Informática',
+          establishment: 'Ambos',
+          status: 'Activo',
+          lastAccess: 'Hoy, 15:42',
+          phone: '+56987654321',
+          notes: 'Administradora general del ecosistema VIPENT.'
+        },
+        {
+          id: 'u-2',
+          fullName: 'Roberto Gómez Pardo',
+          email: 'rgomez@hualane.cl',
+          rut: '12.345.678-9',
+          role: 'Clínico',
+          specialty: 'Médico Coordinador PSCV',
+          establishment: 'Hualañé',
+          status: 'Activo',
+          lastAccess: 'Ayer, 09:12',
+          phone: '+56912345678',
+          notes: 'Coordina piloto de APS en establecimiento Hualañé.'
+        },
+        {
+          id: 'u-3',
+          fullName: 'Patricia Rojas Silva',
+          email: 'projas@curepto.cl',
+          rut: '15.678.910-K',
+          role: 'Clínico',
+          specialty: 'Enfermera Coordinadora',
+          establishment: 'Curepto',
+          status: 'Activo',
+          lastAccess: '24 May 2026',
+          phone: '+56923456789',
+          notes: 'Coordinadora de salud cardiovascular Curepto.'
+        },
+        {
+          id: 'u-4',
+          fullName: 'Carlos Mendoza Aliste',
+          email: 'cmendoza@hualane.cl',
+          rut: '16.543.210-2',
+          role: 'Clínico',
+          specialty: 'Médico Cirujano',
+          establishment: 'Hualañé',
+          status: 'Activo',
+          lastAccess: 'Hoy, 11:20',
+          phone: '+56934567890',
+          notes: 'Médico clínico del Programa Salud Cardiovascular.'
+        },
+        {
+          id: 'u-5',
+          fullName: 'Camila Silva Torres',
+          email: 'csilva@curepto.cl',
+          rut: '17.890.123-4',
+          role: 'Clínico',
+          specialty: 'Enfermera',
+          establishment: 'Curepto',
+          status: 'Activo',
+          lastAccess: 'Hoy, 08:05',
+          phone: '+56945678901',
+          notes: 'Profesional de enfermería, atención domiciliaria y box.'
+        },
+        {
+          id: 'u-6',
+          fullName: 'María José Flores',
+          email: 'mjflores@hualane.cl',
+          rut: '18.234.567-8',
+          role: 'Clínico',
+          specialty: 'Nutricionista',
+          establishment: 'Hualañé',
+          status: 'Pendiente',
+          lastAccess: 'Sin acceso registrado',
+          phone: '+56956789012',
+          notes: 'Nutricionista del Programa Salud Cardiovascular.'
+        },
+        {
+          id: 'u-7',
+          fullName: 'Juan Carlos Plaza',
+          email: 'jplaza@hualane.cl',
+          rut: '13.412.569-4',
+          role: 'Clínico',
+          specialty: 'Administrador de SOME',
+          establishment: 'Hualañé',
+          status: 'Inactivo',
+          lastAccess: '12 Abr 2026',
+          phone: '+56967890123',
+          notes: 'Asignación de cupos y agendas de morbilidad PSCV.'
+        },
+        {
+          id: 'u-8',
+          fullName: 'Gloria Mandiola Fuentes',
+          email: 'gmandiola@minsal.cl',
+          rut: '10.987.654-3',
+          role: 'Clínico',
+          specialty: 'Auditor Externo',
+          establishment: 'Ambos',
+          status: 'Bloqueado',
+          lastAccess: '10 May 2026',
+          phone: '+56978901234',
+          notes: 'Auditoría externa y validación de cobertura REM.'
+        }
+      ];
+      localStorage.setItem('vipent_users_mock', JSON.stringify(mockUsers));
+    }
+
+    return mockUsers.map((mu: any) => {
+      let name = mu.fullName;
+      if (name === 'Usuario Administrador') {
+        name = 'Sofía Alarcón Peña';
+      }
+      name = name.replace(/^(Dr\.|Enf\.|Nut\.)\s+/i, '');
+
+      let role: 'Medico' | 'Enfermera' | 'Admin' = 'Medico';
+      const valSpecialty = (mu.specialty || '').toLowerCase();
+      const valRole = (mu.role || '').toLowerCase();
+      
+      if (valRole === 'administrador') {
+        role = 'Admin';
+      } else if (valSpecialty.includes('enfermera') || valSpecialty.includes('nutricionista') || mu.email.includes('csilva') || mu.email.includes('projas')) {
+        role = 'Enfermera';
+      } else {
+        role = 'Medico';
+      }
+
+      let status: 'Active' | 'Inactive' = 'Active';
+      if (mu.status === 'Inactivo' || mu.status === 'Bloqueado') {
+        status = 'Inactive';
+      }
+
+      return {
+        id: mu.id,
+        name,
+        email: mu.email,
+        role,
+        status
+      };
+    });
+  });
+
+  const handleAddUserV2 = (newUser: Omit<User, 'id'>) => {
+    const userWithId: User = {
+      ...newUser,
+      id: `u-${Date.now()}`
+    };
+    
+    setUsersV2(prev => {
+      const updatedList = [...prev, userWithId];
+      
+      const saved = localStorage.getItem('vipent_users_mock');
+      let mockList: any[] = [];
+      if (saved) {
+        try { mockList = JSON.parse(saved); } catch (e) {}
+      }
+      
+      const newMockItem = {
+        id: userWithId.id,
+        fullName: userWithId.name,
+        email: userWithId.email,
+        rut: `${Math.floor(Math.random() * 10 + 10)}.${Math.floor(Math.random() * 900 + 100)}.${Math.floor(Math.random() * 900 + 100)}-${Math.random() > 0.5 ? 'K' : Math.floor(Math.random() * 9)}`,
+        role: userWithId.role === 'Admin' ? 'Administrador' : 'Clínico',
+        specialty: userWithId.role === 'Medico' ? 'Médico Cirujano' : userWithId.role === 'Enfermera' ? 'Enfermera' : 'Administrador',
+        establishment: 'Ambos',
+        status: userWithId.status === 'Active' ? 'Activo' : 'Inactivo',
+        lastAccess: 'Hoy, ' + new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }),
+        phone: '+56900055500',
+        notes: 'Creado desde Usuarios versión 2.'
+      };
+      
+      localStorage.setItem('vipent_users_mock', JSON.stringify([...mockList, newMockItem]));
+      return updatedList;
+    });
+  };
+
+  const handleEditUserV2 = (id: string, updated: Omit<User, 'id'>) => {
+    setUsersV2(prev => {
+      const updatedList = prev.map(u => u.id === id ? { ...u, ...updated } : u);
+      
+      const saved = localStorage.getItem('vipent_users_mock');
+      if (saved) {
+        try {
+          let mockList = JSON.parse(saved);
+          if (Array.isArray(mockList)) {
+            mockList = mockList.map(mu => {
+              if (mu.id === id) {
+                return {
+                  ...mu,
+                  fullName: updated.name,
+                  email: updated.email,
+                  role: updated.role === 'Admin' ? 'Administrador' : 'Clínico',
+                  status: updated.status === 'Active' ? 'Activo' : 'Inactivo',
+                };
+              }
+              return mu;
+            });
+            localStorage.setItem('vipent_users_mock', JSON.stringify(mockList));
+          }
+        } catch (e) {}
+      }
+      
+      return updatedList;
+    });
+  };
+
+  const handleDeleteUserV2 = (id: string) => {
+    setUsersV2(prev => {
+      const updatedList = prev.filter(u => u.id !== id);
+      
+      const saved = localStorage.getItem('vipent_users_mock');
+      if (saved) {
+        try {
+          let mockList = JSON.parse(saved);
+          if (Array.isArray(mockList)) {
+            mockList = mockList.filter(mu => mu.id !== id);
+            localStorage.setItem('vipent_users_mock', JSON.stringify(mockList));
+          }
+        } catch (e) {}
+      }
+      
+      return updatedList;
+    });
+  };
   const [patientListFilters, setPatientListFilters] = useState<{
     riskFilter?: 'Todos' | 'Alto' | 'Moderado' | 'Bajo';
     filterMode?: 'Todos' | 'Activos' | 'Inactivos' | 'Activo' | 'Inactivo';
@@ -228,12 +467,12 @@ export default function App() {
             <AnimatePresence mode="wait">
               {isCalendarView && (
                 <motion.div 
-                   key="CALENDAR_WORKSPACE"
+                  key="CALENDAR_WORKSPACE"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="flex-1 flex flex-col min-h-0"
+                  className="flex-1 flex flex-col min-h-0 space-y-6"
                 >
                   <CalendarHeader 
                     view={view as 'MES' | 'SEMANA' | 'DÍA'} 
@@ -350,6 +589,16 @@ export default function App() {
               {view === 'USER_PROFILE' && <motion.div key="USER_PROFILE" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col min-h-0"><UserProfile /></motion.div>}
               {view === 'AUDIT_LOG' && <motion.div key="AUDIT_LOG" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col min-h-0"><AuditLog /></motion.div>}
               {view === 'USUARIOS' && <motion.div key="USUARIOS" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col min-h-0"><UserManagement /></motion.div>}
+              {view === 'USUARIOS_V2' && (
+                <motion.div key="USUARIOS_V2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col min-h-0">
+                  <UserManagementV2 
+                    users={usersV2} 
+                    onAddUser={handleAddUserV2} 
+                    onEditUser={handleEditUserV2} 
+                    onDeleteUser={handleDeleteUserV2} 
+                  />
+                </motion.div>
+              )}
               {view === 'DASHBOARD' && (
                 <motion.div 
                   key="DASHBOARD"
@@ -372,7 +621,7 @@ export default function App() {
             </AnimatePresence>
             
             {/* Placeholder for other views */}
-            {!['DASHBOARD', 'MES', 'SEMANA', 'DÍA', 'LISTADO', 'REPORTE_REM', 'USER_PROFILE', 'AUDIT_LOG', 'PACIENTES', 'PACIENTE_DETALLE', 'PACIENTE_EDICION', 'USUARIOS'].includes(view) && (
+            {!['DASHBOARD', 'MES', 'SEMANA', 'DÍA', 'LISTADO', 'REPORTE_REM', 'USER_PROFILE', 'AUDIT_LOG', 'PACIENTES', 'PACIENTE_DETALLE', 'PACIENTE_EDICION', 'USUARIOS', 'USUARIOS_V2'].includes(view) && (
               <div className="flex-1 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-400 font-medium italic shadow-sm">
                 Vista de {view.toLowerCase()} en desarrollo...
               </div>

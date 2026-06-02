@@ -25,26 +25,39 @@ export function formatShortName(name: string): string {
   const cleanName = name.trim();
   const words = cleanName.split(/\s+/);
   
+  let formatted = '';
   if (words.length <= 1) {
-    return cleanName.toUpperCase();
-  }
-  
-  // Checklist for Chilean format: PATERNO MATERNO NOMBRES
-  // e.g., ABUD VALENZUELA CRISTIAN ALEJANDRO -> CRISTIAN ABUD
-  const isUppercaseFormat = cleanName === cleanName.toUpperCase() && words.length >= 3;
-  
-  if (isUppercaseFormat) {
-    const lastName = words[0];
-    const firstName = words[2];
-    if (firstName && lastName) {
-      return `${firstName} ${lastName}`.toUpperCase();
+    formatted = cleanName;
+  } else {
+    // Checklist for Chilean format: PATERNO MATERNO NOMBRES
+    // e.g., ABUD VALENZUELA CRISTIAN ALEJANDRO -> CRISTIAN ABUD
+    const isUppercaseFormat = cleanName === cleanName.toUpperCase() && words.length >= 3;
+    
+    if (isUppercaseFormat) {
+      const lastName = words[0];
+      const firstName = words[2];
+      if (firstName && lastName) {
+        formatted = `${firstName} ${lastName}`;
+      } else {
+        formatted = cleanName;
+      }
+    } else {
+      // Otherwise, standard GIVEN_NAME SURNAME (e.g., María López)
+      const firstName = words[0];
+      const lastName = words[1] || words[words.length - 1];
+      formatted = `${firstName} ${lastName}`;
     }
   }
   
-  // Otherwise, standard GIVEN_NAME SURNAME (e.g., María López) -> MARÍA LÓPEZ
-  const firstName = words[0];
-  const lastName = words[1] || words[words.length - 1];
-  return `${firstName} ${lastName}`.toUpperCase();
+  if (!formatted) return '';
+  // Convert each word to have first letter capitalized and rest in lowercase
+  return formatted
+    .split(/\s+/)
+    .map(word => {
+      if (!word) return '';
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
 }
 
 export function getCompensationSummary(p: Patient): {
@@ -473,12 +486,25 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
   });
 
   return (
-    <div id="vipent-patient-list-view" className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+    <div id="vipent-patient-list-view" className="flex-1 flex flex-col min-h-0 bg-transparent space-y-6">
       {/* Header section with summaries */}
-      <div className="p-6 md:p-8 bg-white border-b border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="p-6 md:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4 shrink-0 font-sans animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <Heart className="text-brand-blue" size={24} />
+            <svg
+              className="text-brand-blue"
+              width={24}
+              height={24}
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M10.5 21H4C4 17.4735 6.60771 14.5561 10 14.0709M16.4976 16.2119C15.7978 15.4328 14.6309 15.2232 13.7541 15.9367C12.8774 16.6501 12.7539 17.843 13.4425 18.6868C13.8312 19.1632 14.7548 19.9983 15.4854 20.6353C15.8319 20.9374 16.0051 21.0885 16.2147 21.1503C16.3934 21.203 16.6018 21.203 16.7805 21.1503C16.9901 21.0885 17.1633 20.9374 17.5098 20.6353C18.2404 19.9983 19.164 19.1632 19.5527 18.6868C20.2413 17.843 20.1329 16.6426 19.2411 15.9367C18.3492 15.2307 17.1974 15.4328 16.4976 16.2119ZM15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z" />
+            </svg>
             <span>Pacientes PSCV</span>
           </h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -516,10 +542,10 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
         </div>
       </div>
 
-      <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         
         {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
           
           {/* FILTROS COMPACTOS EN UN GRID */}
           <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-3">
@@ -641,24 +667,24 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
           {/* Table Container */}
           <div className="flex-1 overflow-auto hidden md:block">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
-                <tr>
-                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[24%]">
+              <thead className="sticky top-0 bg-gray-50 border-b border-gray-250 z-10">
+                <tr className="font-sans">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[24%] text-left">
                     Paciente / RUT
                   </th>
-                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[14%]">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[14%] text-left">
                     Estado PSCV
                   </th>
-                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[14%]">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[14%] text-left">
                     Riesgo Cardiovascular
                   </th>
-                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[18%]">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[18%] text-left">
                     Compensación
                   </th>
-                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[18%]">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[18%] text-left">
                     Prioridad
                   </th>
-                  <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center w-[12%] pr-6">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[12%] text-center pr-6">
                     Acciones
                   </th>
                 </tr>
@@ -673,18 +699,18 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                 return (
                   <tr 
                     key={patient.id}
-                    className={`hover:bg-slate-50/70 transition-colors group ${
+                    className={`hover:bg-slate-50/50 transition-all font-mono align-middle group ${
                       isHighlighted ? 'bg-brand-blue/5 border-l-4 border-l-brand-blue font-semibold' : ''
                     }`}
                   >
                     {/* Col 1: Paciente */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
-                      <div className="font-bold text-slate-900 group-hover:text-brand-blue transition-colors text-sm">{formatShortName(patient.name)}</div>
-                      <div className="text-[10px] text-slate-400 font-bold mt-1">RUT: {patient.rut}</div>
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
+                      <span className="text-xs font-semibold text-gray-900 block leading-tight group-hover:text-brand-blue transition-colors">{formatShortName(patient.name)}</span>
+                      <div className="text-[10px] text-slate-400 font-mono tracking-tight mt-0.5">RUT: {patient.rut}</div>
                     </td>
 
                     {/* Col 2: Estado */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${
                         pscvState === 'Activo' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
                         'bg-slate-50 text-slate-600 border-slate-200'
@@ -694,7 +720,7 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                     </td>
 
                     {/* Col 3: Riesgo */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${
                         patient.risk === 'Alto' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
                         patient.risk === 'Moderado' ? 'bg-amber-50 text-amber-700 border-amber-200' : 
@@ -705,7 +731,7 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                     </td>
 
                     {/* Col 4: Compensación (hta / dm2) */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${
                         compSummary.tone === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
                         compSummary.tone === 'danger' ? 'bg-rose-50 text-rose-700 border-rose-200' :
@@ -716,14 +742,14 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                     </td>
 
                     {/* Col 5: Prioridad */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold leading-none ${priority.color}`}>
                         {priority.label}
                       </span>
                     </td>
 
                     {/* Col 6: Acción (Menú de tres puntos únicamente) */}
-                    <td className="py-3.5 px-4 text-center" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-5 py-3.5 text-center" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-center relative">
                         <button
                           onClick={() => setActiveDropdownPatientId(activeDropdownPatientId === patient.id ? null : patient.id)}

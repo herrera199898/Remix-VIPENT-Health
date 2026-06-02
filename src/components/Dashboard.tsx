@@ -17,7 +17,8 @@ import {
   Bell,
   Clock,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  LayoutDashboard
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -637,19 +638,22 @@ export default function Dashboard({
   return (
     <div className="flex-1 flex flex-col min-h-0 overflow-hidden relative bg-[#f3f4f6]">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between shrink-0 mb-4 px-1 gap-4">
+      <div className="p-6 md:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6 shrink-0 mb-6 font-sans animate-fade-in">
         <div className="flex flex-wrap items-center gap-3 min-w-0">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 truncate">Dashboard PSCV</h1>
-            <p className="text-xs text-gray-500 font-medium">Resumen operativo del seguimiento cardiovascular</p>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+              <LayoutDashboard className="text-brand-blue animate-pulse" size={24} />
+              <span>Dashboard PSCV</span>
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">Resumen operativo del seguimiento cardiovascular</p>
           </div>
-          <div className="hidden lg:flex items-center gap-2 text-[11px] font-bold text-gray-500 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-xs mr-2 ml-2">
+          <div className="hidden lg:flex items-center gap-2 text-[11px] font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 shadow-xs mr-2 ml-2">
             <Activity size={14} className="text-rose-500 animate-pulse" />
             <span>Monitoreo Piloto</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-600 shadow-xs">
-              <span className="text-gray-400 font-medium">Establecimiento:</span>
+            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-600 shadow-xs">
+              <span className="text-gray-400 font-medium font-sans">Establecimiento:</span>
               <select 
                 value={selectedFacility}
                 onChange={(e) => {
@@ -664,8 +668,8 @@ export default function Dashboard({
                 <option value="Curepto">Curepto</option>
               </select>
             </div>
-            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-600 shadow-xs">
-              <span className="text-gray-400 font-medium">Periodo:</span>
+            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-600 shadow-xs">
+              <span className="text-gray-400 font-medium font-sans">Periodo:</span>
               <select 
                 value={selectedPeriod}
                 onChange={(e) => {
@@ -689,7 +693,7 @@ export default function Dashboard({
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               onClick={saveLayout}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-white rounded-lg text-sm font-semibold shadow-md hover:bg-blue-900 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-white rounded-lg text-sm font-semibold shadow-md hover:bg-blue-900 transition-colors cursor-pointer"
             >
               <Save size={16} />
               Guardar Cambios
@@ -697,7 +701,7 @@ export default function Dashboard({
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-gray-600 rounded-lg text-sm font-semibold border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-gray-600 rounded-lg text-sm font-semibold border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <Edit3 size={16} />
               Personalizar

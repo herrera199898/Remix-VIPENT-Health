@@ -11,7 +11,8 @@ import {
   AlertTriangle, 
   Ban, 
   Download, 
-  Info
+  Info,
+  ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -471,38 +472,35 @@ export default function AuditLog() {
   };
 
   return (
-    <div id="vipent-audit-log-view" className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+    <div id="vipent-audit-log-view" className="flex-1 flex flex-col min-h-0 bg-transparent space-y-6">
       
       {/* 2. ENCABEZADO */}
-      <div className="p-6 md:p-8 bg-white border-b border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 md:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            Trazabilidad y Auditoría
+            <ShieldCheck className="text-brand-blue" size={24} />
+            <span>Trazabilidad y Auditoría</span>
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             Registro de accesos, acciones y eventos relevantes del sistema VIPENT
           </p>
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-800 rounded-md border border-blue-100 text-xs text-secondary">
-            <Info size={14} className="text-blue-500 flex-shrink-0" />
-            <span>Los registros de auditoría son solo de consulta y no pueden ser modificados desde esta vista.</span>
-          </div>
         </div>
 
         {/* 15. EXPORT BUTTON (HEADER COMPACT) */}
         <button 
           id="btn-exportar-auditoria"
           onClick={handleExport}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold transition-all shadow-sm flex-shrink-0"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold transition-all shadow-sm flex-shrink-0 cursor-pointer"
         >
           <Download size={15} />
           <span>Exportar auditoría</span>
         </button>
       </div>
 
-      <div className="p-4 md:p-8 flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         
         {/* CONTAINER PRINCIPAL DE LA TABLA Y FILTROS */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
           
           {/* 5. FILTROS COMPACTOS VISIBLES INLINE */}
           <div className="p-4 border-b border-gray-200 bg-gray-50/50 flex flex-col gap-3">
@@ -919,11 +917,6 @@ export default function AuditLog() {
                     </div>
 
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Dispositivo / Agente</span>
-                      <p className="text-xs text-slate-600 truncate" title={selectedEvent.device}>{selectedEvent.device}</p>
-                    </div>
-
-                    <div className="space-y-1">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Dimensión (Módulo / Acción)</span>
                       <div className="flex items-center gap-2 pt-0.5">
                         <span className={`inline-flex px-2 py-0.5 rounded border text-[10px] font-bold ${getModuleStyle(selectedEvent.module)}`}>
@@ -949,25 +942,6 @@ export default function AuditLog() {
                     <p className="text-xs font-medium text-gray-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">
                       {selectedEvent.description}
                     </p>
-                  </div>
-
-                  {/* Referencia técnica */}
-                  <div className="border-t border-gray-100 pt-3 space-y-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Referencia técnica</span>
-                    <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-lg text-xs font-mono text-slate-600 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <div>
-                        <span className="font-bold text-slate-650">Código Interno:</span> <span className="text-slate-900 font-bold">{selectedEvent.systemReference || 'LOG-AUDIT-N/A'}</span>
-                      </div>
-                      <span className="text-[10px] text-slate-450 font-sans font-medium bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">
-                        Detalle técnico disponible en logs internos del sistema.
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Advertencia de solo lectura */}
-                  <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 text-amber-800 rounded-md border border-amber-100 text-[11px] font-semibold font-sans justify-center mt-3">
-                    <ShieldAlert size={14} className="text-amber-500" />
-                    <span>Registro de seguridad inmutable. No se permite realizar modificaciones ni eliminaciones desde esta consola. (Registro de solo lectura)</span>
                   </div>
 
                 </div>

@@ -524,24 +524,27 @@ export default function UserManagement() {
           <div className="flex-1 overflow-auto">
             {/* Desktop View */}
             <div className="hidden md:block overflow-x-auto flex-1 min-h-0">
-              <table className="w-full border-collapse text-left text-xs text-gray-700">
-                <thead className="bg-[#f8fafc] border-b border-gray-200 sticky top-0 z-10">
-                  <tr>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[25%] font-sans">Usuario</th>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[12%] font-sans">Rol</th>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[20%] font-sans">Especialidad / Profesión</th>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[15%] font-sans">Establecimiento</th>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[10%] text-center font-sans">Estado</th>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[13%] font-sans">Último Acceso</th>
-                    <th className="py-3 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-[5%] text-center pr-6 font-sans">Acciones</th>
+              <table className="w-full border-collapse text-left text-xs text-slate-700">
+                <thead className="sticky top-0 bg-gray-50 border-b border-gray-250 z-10">
+                  <tr className="font-sans">
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[25%] text-left">Usuario</th>
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[12%] text-left">Rol</th>
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[20%] text-left">Especialidad / Profesión</th>
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[15%] text-left">Establecimiento</th>
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[10%] text-center">Estado</th>
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[13%] text-left">Último Acceso</th>
+                    <th className="px-5 py-3 text-[10px] font-bold text-gray-500 uppercase tracking-wider w-[5%] text-center pr-6">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {filteredUsers.length > 0 ? (
                     filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-slate-50/70 transition-colors">
+                      <tr 
+                        key={user.id} 
+                        className="hover:bg-slate-50/50 transition-all font-mono align-middle"
+                      >
                         {/* User Profile column */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-xs text-gray-700 font-sans">
                       <div className="flex items-center gap-3">
                         {/* Avatar */}
                         <div className={`w-9 h-9 rounded-full font-bold text-xs flex items-center justify-center shrink-0 border ${
@@ -553,55 +556,55 @@ export default function UserManagement() {
                           {getInitials(user.fullName)}
                         </div>
                         <div className="overflow-hidden">
-                          <p className="font-bold text-slate-900 truncate tracking-tight text-sm">{user.fullName}</p>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-[10px] text-slate-450 font-semibold font-mono mt-0.5">
-                            <span className="text-slate-400 truncate">{user.email}</span>
-                            <span className="hidden sm:inline text-slate-200 font-normal">|</span>
-                            <span className="text-slate-400 truncate shrink-0 font-sans font-bold">RUT: {user.rut}</span>
+                          <span className="text-xs font-semibold text-gray-900 block leading-tight">{user.fullName}</span>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-[10px] text-gray-400 font-mono tracking-tight mt-0.5">
+                            <span className="truncate">{user.email}</span>
+                            <span className="hidden sm:inline text-gray-250 font-sans">|</span>
+                            <span className="truncate shrink-0">RUT: {user.rut}</span>
                           </div>
                         </div>
                       </div>
                     </td>
 
                     {/* Role column */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
                       <span className={getRoleBadgeStyle(user.role)}>
                         {user.role}
                       </span>
                     </td>
 
                     {/* Specialty / Profession column */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
-                      <span className="text-xs font-semibold text-slate-700 font-sans">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
+                      <span className="text-xs font-semibold text-slate-800">
                         {user.specialty || 'No especificada'}
                       </span>
                     </td>
 
                     {/* Establishment column */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
-                      <div className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold font-sans">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-805 font-semibold">
                         <Building2 size={13} className="text-slate-400 shrink-0" />
                         <span>{getEstablishmentIcon(user.establishment)}</span>
                       </div>
                     </td>
 
                     {/* Status column */}
-                    <td className="py-3.5 px-4 text-center text-xs text-slate-700">
+                    <td className="px-5 py-3.5 text-center text-xs text-slate-700 font-sans">
                       <span className={getStatusBadgeStyle(user.status)}>
                         {user.status}
                       </span>
                     </td>
 
                     {/* Last access column */}
-                    <td className="py-3.5 px-4 text-xs text-slate-700">
-                      <div className="flex items-center gap-1.5 font-bold text-[11px] text-slate-500 font-mono">
+                    <td className="px-5 py-3.5 text-xs text-slate-700 font-sans">
+                      <div className="flex items-center gap-1.5 font-mono text-[11px] text-gray-500">
                         <Calendar size={12} className="text-slate-400 shrink-0" />
                         <span>{user.lastAccess}</span>
                       </div>
                     </td>
 
                     {/* Actions column */}
-                    <td className="py-3.5 px-4 text-center pr-6 relative" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-5 py-3.5 text-center pr-6 relative" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-center relative">
                         <button 
                           onClick={(e) => {

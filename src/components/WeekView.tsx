@@ -72,7 +72,7 @@ export default function WeekView({ appointments, currentDate, selectedDateStr, o
   };
 
   return (
-    <div className="flex-1 bg-white border border-gray-200 rounded-b-lg flex flex-col overflow-hidden">
+    <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col overflow-hidden">
       {/* Week Header */}
       <div className="grid grid-cols-[100px_1fr] bg-slate-100/80 border-b border-gray-200 shrink-0">
         <div className="border-r border-gray-200" />
