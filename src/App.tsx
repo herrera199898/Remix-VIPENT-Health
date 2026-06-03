@@ -18,7 +18,9 @@ import AuditLog from './components/AuditLog';
 import UserManagement from './components/UserManagement';
 import UserManagementV2 from './components/UserManagementV2';
 import Dashboard from './components/Dashboard';
+import ResearchDashboard from './components/ResearchDashboard';
 import PatientList from './components/PatientList';
+import AnonymizedPatientList from './components/AnonymizedPatientList';
 import PatientDetails from './components/PatientDetails';
 import PatientEdit from './components/PatientEdit';
 import AppointmentModal from './components/AppointmentModal';
@@ -27,10 +29,31 @@ import PatientAppointmentManagementModal from './components/PatientAppointmentMa
 import { APPOINTMENTS_MOCK, Patient, Appointment, parseDisplayTimeToInput, formatInputTimeToDisplay, PATIENTS_MOCK, User } from './types';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('is_authenticated') === 'true';
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('vipent_current_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   });
-  const [view, setView] = useState<'DASHBOARD' | 'MES' | 'SEMANA' | 'DÍA' | 'LISTADO' | 'REPORTE_REM' | 'USER_PROFILE' | 'AUDIT_LOG' | 'PACIENTES' | 'PACIENTE_DETALLE' | 'PACIENTE_EDICION' | 'USUARIOS' | 'USUARIOS_V2'>('DASHBOARD');
+  
+  // Retro-compatibility / simple check
+  const isAuthenticated = !!currentUser || localStorage.getItem('is_authenticated') === 'true';
+
+  const [view, setView] = useState<'DASHBOARD' | 'RESEARCH_DASHBOARD' | 'MES' | 'SEMANA' | 'DÍA' | 'LISTADO' | 'REPORTE_REM' | 'USER_PROFILE' | 'AUDIT_LOG' | 'PACIENTES' | 'PACIENTE_DETALLE' | 'PACIENTE_EDICION' | 'USUARIOS' | 'USUARIOS_V2' | 'ANONYMIZED_DATA'>(() => {
+    const savedUser = localStorage.getItem('vipent_current_user');
+    if (savedUser) {
+       try {
+         const parsed = JSON.parse(savedUser);
+         if (parsed?.role === 'Investigador') return 'RESEARCH_DASHBOARD';
+       } catch (e) {}
+    }
+    return 'DASHBOARD';
+  });
   const [usersV2, setUsersV2] = useState<User[]>(() => {
     const saved = localStorage.getItem('vipent_users_mock');
     let mockUsers: any[] = [];
@@ -417,6 +440,15 @@ export default function App() {
   const isCalendarView = ['MES', 'SEMANA', 'DÍA'].includes(view);
 
   const handleViewChange = (newView: any, params?: any) => {
+    // Restricted access for Investigator
+    if (currentUser?.role === 'Investigador') {
+      const allowedViews = ['RESEARCH_DASHBOARD', 'USER_PROFILE', 'ANONYMIZED_DATA'];
+      if (!allowedViews.includes(newView)) {
+        setView('RESEARCH_DASHBOARD');
+        return;
+      }
+    }
+
     const isCalendarView = ['MES', 'SEMANA', 'DÍA'].includes(newView);
     const wasCalendarView = ['MES', 'SEMANA', 'DÍA'].includes(view);
     
@@ -442,24 +474,31 @@ export default function App() {
     updateSelectedDateFromDate(date);
   };
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    localStorage.setItem('vipent_current_user', JSON.stringify(user));
     localStorage.setItem('is_authenticated', 'true');
+    if (user.role === 'Investigador') {
+      setView('RESEARCH_DASHBOARD');
+    } else {
+      setView('DASHBOARD');
+    }
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    setCurrentUser(null);
+    localStorage.removeItem('vipent_current_user');
     localStorage.removeItem('is_authenticated');
     setView('DASHBOARD');
   };
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !currentUser) {
     return <Login onLogin={handleLogin} />;
   }
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f3f4f6]">
-      <Sidebar currentView={view} onNavigate={handleViewChange} onLogout={handleLogout} />
+      <Sidebar currentView={view} onNavigate={handleViewChange} onLogout={handleLogout} currentUser={currentUser} />
       
       <main className="flex-1 flex flex-col p-6 h-full overflow-hidden bg-calendar-bg">
         <div className="w-full h-full flex flex-col max-w-[1536px] xl:max-w-[1680px] 2xl:max-w-[1850px] mx-auto">
@@ -579,7 +618,7 @@ export default function App() {
               {view === 'REPORTE_REM' && (
                 <motion.div key="REPORTE_REM" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col min-h-0">
                   <REMReport onNavigate={(targetView, filters) => {
-                    setView(targetView as any);
+                    handleViewChange(targetView);
                     if (filters) {
                       setPatientListFilters(filters);
                     }
@@ -618,10 +657,32 @@ export default function App() {
                   />
                 </motion.div>
               )}
+              {view === 'RESEARCH_DASHBOARD' && (
+                <motion.div 
+                  key="RESEARCH_DASHBOARD"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 flex flex-col min-h-0"
+                >
+                  <ResearchDashboard />
+                </motion.div>
+              )}
+              {view === 'ANONYMIZED_DATA' && (
+                <motion.div 
+                  key="ANONYMIZED_DATA"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 flex flex-col min-h-0"
+                >
+                  <AnonymizedPatientList />
+                </motion.div>
+              )}
             </AnimatePresence>
             
             {/* Placeholder for other views */}
-            {!['DASHBOARD', 'MES', 'SEMANA', 'DÍA', 'LISTADO', 'REPORTE_REM', 'USER_PROFILE', 'AUDIT_LOG', 'PACIENTES', 'PACIENTE_DETALLE', 'PACIENTE_EDICION', 'USUARIOS', 'USUARIOS_V2'].includes(view) && (
+            {!['DASHBOARD', 'MES', 'SEMANA', 'DÍA', 'LISTADO', 'REPORTE_REM', 'USER_PROFILE', 'AUDIT_LOG', 'PACIENTES', 'PACIENTE_DETALLE', 'PACIENTE_EDICION', 'USUARIOS', 'USUARIOS_V2', 'RESEARCH_DASHBOARD', 'ANONYMIZED_DATA'].includes(view) && (
               <div className="flex-1 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-400 font-medium italic shadow-sm">
                 Vista de {view.toLowerCase()} en desarrollo...
               </div>

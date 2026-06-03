@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LogIn, Mail, ArrowLeft, KeyRound } from 'lucide-react';
+import { LogIn, Mail, ArrowLeft, KeyRound, Shield, Search as SearchIcon, User as UserIcon } from 'lucide-react';
+import { User, UserRole } from '../types';
 
 interface LoginProps {
-  onLogin: () => void;
+  onLogin: (user: User) => void;
 }
 
 export default function Login({ onLogin }: LoginProps) {
@@ -22,11 +23,31 @@ export default function Login({ onLogin }: LoginProps) {
     
     // Simulate API call
     setTimeout(() => {
-      if (username && password) {
-        onLogin();
+      if (username === 'admin@vipent.cl' && password === 'demo123') {
+        onLogin({ id: 'u1', name: 'Admin Usuario', email: 'admin@vipent.cl', role: 'Admin', status: 'Active', establishment: 'Clínica Central' });
+      } else if (username === 'clinico@vipent.cl' && password === 'demo123') {
+        onLogin({ id: 'u2', name: 'Dr. Clínico', email: 'clinico@vipent.cl', role: 'Medico', status: 'Active', establishment: 'Curepto' });
+      } else if (username === 'investigador@vipent.cl' && password === 'demo123') {
+        onLogin({ id: 'u3', name: 'Usuario Investigador', email: 'investigador@vipent.cl', role: 'Investigador', status: 'Active', establishment: 'Ambos / Datos anonimizados' });
+      } else if (username && password) {
+        // Fallback
+        onLogin({ id: 'u99', name: username, email: username, role: 'Medico', status: 'Active', establishment: 'Hualañé' });
       } else {
         setMessage({ type: 'error', text: 'Por favor, introduce usuario y contraseña.' });
         setIsLoading(false);
+      }
+    }, 800);
+  };
+
+  const handleQuickLogin = (role: UserRole) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      if (role === 'Admin') {
+        onLogin({ id: 'u1', name: 'Admin Usuario', email: 'admin@vipent.cl', role: 'Admin', status: 'Active', establishment: 'Clínica Central' });
+      } else if (role === 'Medico') {
+        onLogin({ id: 'u2', name: 'Dr. Clínico', email: 'clinico@vipent.cl', role: 'Medico', status: 'Active', establishment: 'Curepto' });
+      } else {
+        onLogin({ id: 'u3', name: 'Usuario Investigador', email: 'investigador@vipent.cl', role: 'Investigador', status: 'Active', establishment: 'Ambos / Datos anonimizados' });
       }
     }, 800);
   };
@@ -125,6 +146,39 @@ export default function Login({ onLogin }: LoginProps) {
                       </button>
                     </div>
                   </form>
+                  
+                  <div className="mt-8 border-t border-gray-100 pt-6">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider text-center mb-4">Acceso Rápido (Demo)</p>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleQuickLogin('Admin')}
+                        disabled={isLoading}
+                        className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Shield size={16} className="text-slate-500" />
+                        Ingresar como Administrador
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleQuickLogin('Medico')}
+                        disabled={isLoading}
+                        className="w-full py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <UserIcon size={16} className="text-blue-500" />
+                        Ingresar como Clínico
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleQuickLogin('Investigador')}
+                        disabled={isLoading}
+                        className="w-full py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold rounded-lg transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <SearchIcon size={16} className="text-purple-500" />
+                        Ingresar como Investigador
+                      </button>
+                    </div>
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div

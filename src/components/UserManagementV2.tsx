@@ -15,7 +15,7 @@ export default function UserManagementV2({
   onEditUser,
   onDeleteUser,
 }: UsuariosTabProps) {
-  const [roleFilter, setRoleFilter] = useState<'Todos' | 'Medico' | 'Enfermera' | 'Admin'>('Todos');
+  const [roleFilter, setRoleFilter] = useState<'Todos' | 'Medico' | 'Enfermera' | 'Admin' | 'Investigador'>('Todos');
   const [searchTerm, setSearchTerm] = useState('');
   
   // Sorting state
@@ -39,7 +39,7 @@ export default function UserManagementV2({
   // Form state
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
-  const [formRole, setFormRole] = useState<'Medico' | 'Enfermera' | 'Admin'>('Medico');
+  const [formRole, setFormRole] = useState<'Medico' | 'Enfermera' | 'Admin' | 'Investigador'>('Medico');
   const [formStatus, setFormStatus] = useState<'Active' | 'Inactive'>('Active');
   
   // Validation errors
@@ -216,9 +216,9 @@ export default function UserManagementV2({
           <div className="flex flex-col sm:flex-row sm:items-center gap-3.5 w-full md:w-auto">
             <span className="text-slate-500 font-bold text-xs uppercase tracking-wider font-sans shrink-0">Filtrar por roles</span>
             <div className="flex flex-wrap gap-1 bg-slate-100/80 p-1 rounded-xl">
-              {(['Todos', 'Medico', 'Enfermera', 'Admin'] as const).map((role) => {
+              {(['Todos', 'Medico', 'Enfermera', 'Admin', 'Investigador'] as const).map((role) => {
                 const isSelected = roleFilter === role;
-                const label = role === 'Todos' ? 'Todos' : role === 'Medico' ? 'Médicos' : role === 'Enfermera' ? 'Enfermeras' : 'Administradores';
+                const label = role === 'Todos' ? 'Todos' : role === 'Medico' ? 'Médicos' : role === 'Enfermera' ? 'Enfermeras' : role === 'Admin' ? 'Administradores' : 'Investigadores';
                 return (
                   <button
                     key={role}
@@ -245,6 +245,7 @@ export default function UserManagementV2({
               <option value="Medico">Medico</option>
               <option value="Enfermera">Enfermera</option>
               <option value="Admin">Admin</option>
+              <option value="Investigador">Investigador</option>
             </select>
           </div>
         </div>
@@ -323,9 +324,13 @@ export default function UserManagementV2({
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-xs">
                             Enfermera
                           </span>
-                        ) : (
+                        ) : user.role === 'Admin' ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-xs">
                             Admin
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-100 shadow-xs">
+                            Investigador
                           </span>
                         )}
                       </td>
@@ -502,6 +507,7 @@ export default function UserManagementV2({
                       <option value="Medico">Medico</option>
                       <option value="Enfermera">Enfermera</option>
                       <option value="Admin">Admin</option>
+                      <option value="Investigador">Investigador</option>
                     </select>
                   </div>
 
