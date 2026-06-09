@@ -40,16 +40,26 @@ export default function Login({ onLogin }: LoginProps) {
   };
 
   const handleQuickLogin = (role: UserRole) => {
-    setIsLoading(true);
+    let mockUsername = '';
+    if (role === 'Admin') mockUsername = 'admin@vipent.cl';
+    else if (role === 'Medico') mockUsername = 'clinico@vipent.cl';
+    else mockUsername = 'investigador@vipent.cl';
+    
+    setUsername(mockUsername);
+    setPassword('demo123');
+    
     setTimeout(() => {
-      if (role === 'Admin') {
-        onLogin({ id: 'u1', name: 'Admin Usuario', email: 'admin@vipent.cl', role: 'Admin', status: 'Active', establishment: 'Clínica Central' });
-      } else if (role === 'Medico') {
-        onLogin({ id: 'u2', name: 'Dr. Clínico', email: 'clinico@vipent.cl', role: 'Medico', status: 'Active', establishment: 'Curepto' });
-      } else {
-        onLogin({ id: 'u3', name: 'Usuario Investigador', email: 'investigador@vipent.cl', role: 'Investigador', status: 'Active', establishment: 'Ambos / Datos anonimizados' });
-      }
-    }, 800);
+      setIsLoading(true);
+      setTimeout(() => {
+        if (role === 'Admin') {
+          onLogin({ id: 'u1', name: 'Admin Usuario', email: mockUsername, role: 'Admin', status: 'Active', establishment: 'Clínica Central' });
+        } else if (role === 'Medico') {
+          onLogin({ id: 'u2', name: 'Dr. Clínico', email: mockUsername, role: 'Medico', status: 'Active', establishment: 'Curepto' });
+        } else {
+          onLogin({ id: 'u3', name: 'Usuario Investigador', email: mockUsername, role: 'Investigador', status: 'Active', establishment: 'Ambos / Datos anonimizados' });
+        }
+      }, 800);
+    }, 400);
   };
 
   const handleRecovery = (e: React.FormEvent) => {

@@ -27,14 +27,15 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer 
+  ResponsiveContainer,
+  LabelList 
 } from 'recharts';
 import { motion, AnimatePresence } from 'motion/react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout/legacy';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import MiniCalendar from './MiniCalendar';
-import { APPOINTMENTS_MOCK } from '../types';
+import { APPOINTMENTS_MOCK, User } from '../types';
 import CalendarQuickViewModal from './CalendarQuickViewModal';
 import { createPortal } from 'react-dom';
 
@@ -175,12 +176,33 @@ const ALL_ACTIONS = [
 export default function Dashboard({ 
   onNavigateToCalendar, 
   onNavigate,
-  onNewAppointment
+  onNewAppointment,
+  currentUser
 }: { 
   onNavigateToCalendar?: (date: Date) => void,
   onNavigate?: (view: any, params?: any) => void,
-  onNewAppointment?: () => void
+  onNewAppointment?: () => void,
+  currentUser?: User | null
 }) {
+  const isAdmin = (() => {
+    if (currentUser) {
+      return currentUser.role === 'Admin';
+    }
+    const saved = localStorage.getItem('vipent_current_user');
+    if (saved) {
+      try {
+        const u = JSON.parse(saved);
+        return u?.role === 'Admin';
+      } catch (e) {}
+    }
+    return false;
+  })();
+
+  const allowedActions = ALL_ACTIONS.filter(action => {
+    if (action.id === 'AUDIT_LOG' && !isAdmin) return false;
+    return true;
+  });
+
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFacility, setSelectedFacility] = useState<string>(() => {
     return localStorage.getItem('dashboard_selected_facility') || 'Todos';
@@ -344,6 +366,25 @@ export default function Dashboard({
     localStorage.removeItem('dashboard_actions');
   };
 
+  const CustomVerticalLabel = (props: any) => {
+    const { x, y, width, height, value, index } = props;
+    if (value === 0 || !value) return null;
+    
+    const item = trendData[index];
+    const total = item ? item.compensados + item.noCompensados : value;
+    const percent = Math.round((value / total) * 100) + '%';
+    
+    const isSmall = height < 20;
+    const labelY = isSmall ? y - 10 : y + height / 2;
+    const fill = isSmall ? '#64748b' : '#ffffff';
+    
+    return (
+      <text x={x + width / 2} y={labelY} fill={fill} fontSize={10} fontWeight="bold" textAnchor="middle" dominantBaseline="middle">
+        {percent}
+      </text>
+    );
+  };
+
   const renderKPI = (kpiData: any) => (
     <div className="w-full h-full flex items-center justify-between gap-2 pointer-events-none overflow-hidden select-none">
       <div className="min-w-0 flex-1">
@@ -438,8 +479,12 @@ export default function Dashboard({
                     cursor={{ fill: '#f9fafb' }}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
-                  <Bar dataKey="compensados" name="Compensados" stackId="a" fill="#10b981" radius={[0, 0, 0, 0]} barSize={26} />
-                  <Bar dataKey="noCompensados" name="No compensados" stackId="a" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={26} />
+                  <Bar dataKey="compensados" name="Compensados" stackId="a" fill="#10b981" radius={[0, 0, 0, 0]} barSize={26}>
+                    <LabelList dataKey="compensados" content={<CustomVerticalLabel />} />
+                  </Bar>
+                  <Bar dataKey="noCompensados" name="No compensados" stackId="a" fill="#f43f5e" radius={[4, 4, 0, 0]} barSize={26}>
+                    <LabelList dataKey="noCompensados" content={<CustomVerticalLabel />} />
+                  </Bar>
                 </BarChart>
               ) : (
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Calculando dimensiones...</span>
@@ -469,7 +514,7 @@ export default function Dashboard({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-black leading-none">{item.count}</span>
-                      <h4 className="text-xs font-bold text-gray-900 truncate">{item.title}</h4>
+                      <h4 className="text-xs font-bold text-gray-900 truncate" title={item.title}>{item.title}</h4>
                     </div>
                     <p className="text-[10px] text-gray-400 font-medium leading-snug mt-1 truncate" title={item.desc}>
                       {item.desc}
@@ -566,7 +611,7 @@ export default function Dashboard({
         );
 
       case 'quick-actions':
-        const actionsToDisplay = ALL_ACTIONS.filter(action => activeActions.includes(action.id));
+        const actionsToDisplay = allowedActions.filter(action => activeActions.includes(action.id));
         return (
           <div className="w-full h-full flex flex-col">
             <h3 className="text-xs sm:text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 sm:mb-3 shrink-0">Accesos Directos</h3>
@@ -833,7 +878,7 @@ export default function Dashboard({
              <div className="p-6">
                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Funcionalidades Disponibles</p>
                <div className="grid grid-cols-1 gap-2">
-                 {ALL_ACTIONS.map((action) => {
+                 {allowedActions.map((action) => {
                    const isActive = activeActions.includes(action.id);
                    return (
                      <button

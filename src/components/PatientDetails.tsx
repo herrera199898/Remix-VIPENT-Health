@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, Download, Shield, Activity, Calendar, FileText, 
-  ChevronRight, Heart, AlertTriangle, CheckCircle, Clock, Info, 
+  ChevronRight, Heart, AlertTriangle, CheckCircle, Clock, Info, HelpCircle, 
   Stethoscope, FlaskConical, ChevronDown, ChevronUp, Plus, Edit, 
   Phone, Mail, CalendarDays, TrendingUp, BarChart2, Eye, User, Settings, Search, Bell,
   Apple
@@ -567,13 +567,6 @@ export default function PatientDetails({ patient, onEditProfile, onBack }: Patie
                   <Plus size={14} />
                   Nueva Consulta
                 </button>
-                <button 
-                  onClick={onEditProfile}
-                  className="px-3.5 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-lg flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
-                >
-                  <Edit size={13} />
-                  Editar Datos
-                </button>
               </div>
             </div>
 
@@ -1093,15 +1086,7 @@ export default function PatientDetails({ patient, onEditProfile, onBack }: Patie
                                     </div>
                                   )}
 
-                                  {/* Evolution record notes badge details */}
-                                  {consult.badge && (
-                                    <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
-                                      <span className="text-[10px] font-black text-blue-600 bg-blue-50 border border-blue-200 rounded px-2.5 py-1 flex items-center gap-1 select-none">
-                                        <FileText size={10} />
-                                        {consult.badge}
-                                      </span>
-                                    </div>
-                                  )}
+
 
                                 </div>
                               )}
@@ -1687,16 +1672,7 @@ export default function PatientDetails({ patient, onEditProfile, onBack }: Patie
                   </div>
                 </div>
 
-                {/* Bottom link: Ver Historial */}
-                <div className="pt-4 border-t border-slate-200/50 mt-6 md:mt-0">
-                  <button 
-                    onClick={() => alert(`Sección Historial Clínico para ${patientData.name}`)}
-                    className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-bold text-xs cursor-pointer select-none transition-colors"
-                  >
-                    <Clock size={13} className="rotate-180" />
-                    Ver Historial
-                  </button>
-                </div>
+
               </div>
 
               {/* Right Column (Form to Schedule) */}
@@ -1805,6 +1781,8 @@ function PatientLabsCharts({ chartTrends }: { chartTrends: any[] }) {
   const containerRef2 = React.useRef<HTMLDivElement>(null);
   const [width1, setWidth1] = useState(0);
   const [width2, setWidth2] = useState(0);
+  const [showBPInfo, setShowBPInfo] = useState(false);
+  const [showHbA1cInfo, setShowHbA1cInfo] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -1849,20 +1827,73 @@ function PatientLabsCharts({ chartTrends }: { chartTrends: any[] }) {
     };
   }, []);
 
+  // Format date helper: "26-11-2024" -> "26/11/24"
+  const formatTrendDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split(/[-/]/);
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      const shortYear = year.length === 4 ? year.slice(-2) : year;
+      // Ensure two digit day and month format
+      const formattedDay = day.padStart(2, '0');
+      const formattedMonth = month.padStart(2, '0');
+      return `${formattedDay}/${formattedMonth}/${shortYear}`;
+    }
+    return dateStr.replace(/-/g, '/');
+  };
+
+  const formattedTrends = (chartTrends || []).map((t: any) => ({
+    ...t,
+    formattedDate: formatTrendDate(t.name)
+  }));
+
   return (
     <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4" id="visual-trends-block">
       <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Compensación Histórica (HbA1c & Presión)</h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
         
         {/* BP Trend Chart */}
-        <div className="bg-white p-4 border border-slate-200 rounded-xl shadow-2xs">
-          <span className="font-bold text-xs text-slate-800 block mb-3">Evolución Presión Sistólica / Diastólica</span>
-          <div ref={containerRef1} className="h-[200px] w-full flex items-center justify-center">
+        <div className="bg-white p-4 border border-slate-200 rounded-xl shadow-2xs relative">
+          <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+            <span className="font-bold text-xs text-slate-800">Evolución Presión Sistólica / Diastólica</span>
+            <button
+              onClick={() => setShowBPInfo(!showBPInfo)}
+              className="text-slate-400 hover:text-blue-600 p-1 rounded-full hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+              title="Información de unidades"
+            >
+              <HelpCircle size={15} />
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {showBPInfo && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="absolute left-4 right-4 top-[48px] z-10 bg-slate-900/95 backdrop-blur-xs text-white p-4.5 rounded-lg shadow-lg text-xs md:text-sm space-y-2.5 border border-slate-800 font-sans leading-relaxed text-left"
+              >
+                <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
+                  <span className="font-extrabold text-[#38bdf8] uppercase tracking-wider text-xs">Información de Presión Arterial</span>
+                  <button onClick={() => setShowBPInfo(false)} className="text-slate-400 hover:text-white cursor-pointer font-bold text-base">&times;</button>
+                </div>
+                <p>
+                  Medida en <strong className="text-[#38bdf8]">mmHg</strong> (milímetros de mercurio), que evalúa la presión ejercida por la sangre en las paredes arteriales:
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-slate-300">
+                  <li><strong className="text-white">TAS (Sistólica):</strong> Presión máxima generada durante la contracción del corazón.</li>
+                  <li><strong className="text-white">TAD (Diastólica):</strong> Presión mínima medida en el reposo entre latidos cardíacos.</li>
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div ref={containerRef1} className="h-[220px] w-full flex items-center justify-center">
             {width1 > 0 ? (
-              <LineChart width={width1 - 8} height={200} data={chartTrends}>
+              <LineChart width={width1 - 8} height={220} data={formattedTrends}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} />
-                <YAxis domain={[50, 160]} stroke="#94a3b8" fontSize={10} tickLine={false} />
+                <XAxis dataKey="formattedDate" stroke="#94a3b8" fontSize={9} tickLine={false} angle={-45} textAnchor="end" height={45} />
+                <YAxis domain={[50, 160]} stroke="#94a3b8" fontSize={9} tickLine={false} tickFormatter={(val) => `${val} mmHg`} width={58} />
                 <Tooltip />
                 <Legend verticalAlign="top" height={36} iconType="circle" />
                 <Line type="monotone" dataKey="TAS" name="TAS (Sistólica)" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
@@ -1875,14 +1906,46 @@ function PatientLabsCharts({ chartTrends }: { chartTrends: any[] }) {
         </div>
 
         {/* Weight & HbA1c Trend Chart */}
-        <div className="bg-white p-4 border border-slate-200 rounded-xl shadow-2xs">
-          <span className="font-bold text-xs text-slate-800 block mb-3">Historial Glicosilada (HbA1c %)</span>
-          <div ref={containerRef2} className="h-[200px] w-full flex items-center justify-center">
+        <div className="bg-white p-4 border border-slate-200 rounded-xl shadow-2xs relative">
+          <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+            <span className="font-bold text-xs text-slate-800">Historial Glicosilada (HbA1c %)</span>
+            <button
+              onClick={() => setShowHbA1cInfo(!showHbA1cInfo)}
+              className="text-slate-400 hover:text-emerald-600 p-1 rounded-full hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+              title="Información de unidades"
+            >
+              <HelpCircle size={15} />
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {showHbA1cInfo && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="absolute left-4 right-4 top-[48px] z-10 bg-slate-900/95 backdrop-blur-xs text-white p-4.5 rounded-lg shadow-lg text-xs md:text-sm space-y-2.5 border border-slate-800 font-sans leading-relaxed text-left"
+              >
+                <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
+                  <span className="font-extrabold text-[#10b981] uppercase tracking-wider text-xs">Información de HbA1c</span>
+                  <button onClick={() => setShowHbA1cInfo(false)} className="text-slate-400 hover:text-white cursor-pointer font-bold text-base">&times;</button>
+                </div>
+                <p>
+                  El porcentaje (<strong className="text-[#10b981]">%</strong>) mide la fracción de hemoglobina que tiene glucosa unida a ella en el torrente sanguíneo.
+                </p>
+                <p>
+                  <strong className="text-white">¿Cómo se obtiene?</strong> Se calcula mediante una prueba de laboratorio que analiza la glicación de los glóbulos rojos. Como éstos viven unos <strong className="text-white">120 días</strong>, este examen revela el promedio retrospectivo de tus niveles de azúcar durante los últimos 3 meses, sin verse afectado por ayunos o alimentos recientes.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div ref={containerRef2} className="h-[220px] w-full flex items-center justify-center">
             {width2 > 0 ? (
-              <LineChart width={width2 - 8} height={200} data={chartTrends}>
+              <LineChart width={width2 - 8} height={220} data={formattedTrends}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} />
-                <YAxis domain={[4, 10]} stroke="#94a3b8" fontSize={10} tickLine={false} />
+                <XAxis dataKey="formattedDate" stroke="#94a3b8" fontSize={9} tickLine={false} angle={-45} textAnchor="end" height={45} />
+                <YAxis domain={[4, 10]} stroke="#94a3b8" fontSize={9} tickLine={false} tickFormatter={(val) => `${val}%`} width={40} />
                 <Tooltip />
                 <Legend verticalAlign="top" height={36} iconType="circle" />
                 <Line type="monotone" dataKey="HbA1c" name="HbA1c % Glicosilada" stroke="#10b981" strokeWidth={3.5} dot={{ r: 4 }} />

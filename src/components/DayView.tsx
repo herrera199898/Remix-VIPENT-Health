@@ -1,4 +1,4 @@
-import { Eye, MapPin, Calendar } from 'lucide-react';
+import { Pencil, MapPin, Calendar } from 'lucide-react';
 import { Appointment } from '../types';
 import { motion } from 'motion/react';
 
@@ -148,9 +148,9 @@ export default function DayView({ appointments, currentDate, onManageAppointment
                   <button 
                     onClick={() => onManageAppointment?.(app.id)}
                     className="text-slate-400 hover:text-brand-blue hover:bg-slate-100 p-2 rounded-full transition-all cursor-pointer border-none"
-                    title="Ver / Gestionar Cita"
+                    title="Editar / Gestionar Cita"
                   >
-                    <Eye size={18} />
+                    <Pencil size={15} />
                   </button>
 
                 </div>

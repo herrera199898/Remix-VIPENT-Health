@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Download, ChevronLeft, ChevronRight, FileText, Heart, X, SlidersHorizontal, ChevronDown, ChevronUp, MoreVertical, Calendar, Activity, Info, AlertTriangle, CheckCircle, User, Eye } from 'lucide-react';
+import { Search, Download, ChevronLeft, ChevronRight, FileText, Heart, X, SlidersHorizontal, ChevronDown, ChevronUp, MoreVertical, Calendar, Activity, Info, AlertTriangle, CheckCircle, User, Eye, Scale } from 'lucide-react';
 import { PATIENTS_MOCK, Patient } from '../types';
 
 export const BulletListSvgIcon = ({ className = "w-5 h-5", size, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) => {
@@ -1131,8 +1131,7 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                       <h1 className="text-3xl font-extrabold tracking-tight uppercase">{drawerPatient.name}</h1>
                       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
                         <p><span className="text-gray-400 font-medium">RUT:</span> <span className="font-bold text-white">{drawerPatient.rut}</span></p>
-                        <p><span className="text-gray-400 font-medium">Edad:</span> <span className="font-bold text-white">{calculateAge(drawerPatient.birthDate)} años</span></p>
-                        <p><span className="text-gray-400 font-medium">Diag:</span> <span className="font-bold text-white uppercase">{drawerPatient.diagnoses?.join(' / ') || 'HTA / DM2'}</span></p>
+                        <p><span className="text-gray-400 font-medium">Edad:</span> <span className="font-bold text-white">{calculateAge(drawerPatient.birthDate)}</span></p>
                         <p><span className="text-gray-400 font-medium">Centro:</span> <span className="font-bold text-white">CESFAM {drawerPatient.establishment || 'Curepto'}</span></p>
                       </div>
                     </div>
@@ -1243,33 +1242,116 @@ export default function PatientList({ onViewDetails, initialFilters }: PatientLi
                       })()}
                     </section>
 
-                    {/* Block 3: Diagnósticos y Vigencias */}
+                    {/* Block 3: Diagnósticos */}
                     <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
                       <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2 font-sans">
                         <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
-                        Diagnósticos y Vigencias
+                        Diagnósticos Registrados en PSCV
                       </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">DIAGNÓSTICOS REGISTRADOS EN PSCV</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {drawerPatient.diagnoses && drawerPatient.diagnoses.length > 0 ? (
-                              drawerPatient.diagnoses.map((dg, idx) => (
-                                <span key={idx} className="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 shadow-sm uppercase font-mono">
-                                  {dg}
-                                </span>
-                              ))
-                            ) : (
-                              <span className="text-gray-400 italic text-xs">No registra diagnósticos</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="border border-gray-200 rounded-lg p-4 flex justify-between items-center bg-gray-50">
-                          <span className="text-sm font-medium text-gray-700">Vigencia Patología (GES)</span>
-                          <span className="px-2 py-1 bg-[#d1fae5] text-[#10b981] border border-[#10b981] rounded text-xs font-bold uppercase tracking-wide font-mono">
-                            VIGENTE / AL DÍA
-                          </span>
-                        </div>
+                      <div className="grid grid-cols-1 gap-3">
+                        {(() => {
+                          const DIAGNOSIS_DETAILS: Record<string, { label: string; bg: string; border: string; text: string; icon: any; iconColor: string; textColor: string }> = {
+                            HTA: {
+                              label: "Hipertensión Arterial",
+                              bg: "bg-red-50/50 hover:bg-red-50/80",
+                              border: "border-red-200 hover:border-red-300",
+                              text: "text-red-700 bg-red-100/70 border-transparent",
+                              icon: Heart,
+                              iconColor: "text-red-500",
+                              textColor: "text-red-900"
+                            },
+                            DM2: {
+                              label: "Diabetes Mellitus Tipo 2",
+                              bg: "bg-indigo-50/50 hover:bg-indigo-50/80",
+                              border: "border-indigo-200 hover:border-indigo-300",
+                              text: "text-indigo-700 bg-indigo-100/70 border-transparent",
+                              icon: Activity,
+                              iconColor: "text-indigo-500",
+                              textColor: "text-indigo-900"
+                            },
+                            OBESIDAD: {
+                              label: "Obesidad",
+                              bg: "bg-emerald-50/50 hover:bg-emerald-50/80",
+                              border: "border-emerald-200 hover:border-emerald-300",
+                              text: "text-emerald-700 bg-emerald-100/70 border-transparent",
+                              icon: Scale,
+                              iconColor: "text-emerald-500",
+                              textColor: "text-emerald-900"
+                            },
+                            DLP: {
+                              label: "Dislipidemia",
+                              bg: "bg-slate-50 hover:bg-slate-100/80",
+                              border: "border-slate-200 hover:border-slate-300",
+                              text: "text-slate-700 bg-slate-100/70 border-transparent",
+                              icon: Info,
+                              iconColor: "text-slate-500",
+                              textColor: "text-slate-900"
+                            },
+                            TABAQUISMO: {
+                              label: "Tabaquismo",
+                              bg: "bg-amber-50/50 hover:bg-amber-50/80",
+                              border: "border-amber-200 hover:border-amber-300",
+                              text: "text-amber-700 bg-amber-100/70 border-transparent",
+                              icon: AlertTriangle,
+                              iconColor: "text-amber-600",
+                              textColor: "text-amber-900"
+                            }
+                          };
+
+                          const getDiagnosisDetail = (dg: string) => {
+                            const clean = dg.toUpperCase().trim();
+                            if (DIAGNOSIS_DETAILS[clean]) {
+                              return DIAGNOSIS_DETAILS[clean];
+                            }
+                            return {
+                              label: dg,
+                              bg: "bg-purple-50/50 hover:bg-purple-50/80",
+                              border: "border-purple-200 hover:border-purple-300",
+                              text: "text-purple-700 bg-purple-100/70 border-transparent",
+                              icon: FileText,
+                              iconColor: "text-purple-500",
+                              textColor: "text-purple-900"
+                            };
+                          };
+
+                          const patientDgs = drawerPatient.diagnoses && drawerPatient.diagnoses.length > 0
+                            ? drawerPatient.diagnoses
+                            : [];
+
+                          if (patientDgs.length === 0) {
+                            return (
+                              <div className="col-span-full border border-dashed border-gray-200 rounded-xl p-6 text-center text-gray-400 italic text-sm font-medium">
+                                No registra diagnósticos en su ficha actual.
+                              </div>
+                            );
+                          }
+
+                          return patientDgs.map((dg, idx) => {
+                            const detail = getDiagnosisDetail(dg);
+                            const DiagnosisIcon = detail.icon;
+                            return (
+                              <div 
+                                key={idx} 
+                                className={`flex items-start gap-3.5 p-4 rounded-xl border ${detail.border} ${detail.bg} transition-all duration-200 shadow-xs cursor-default w-full`}
+                              >
+                                <DiagnosisIcon className={`w-5 h-5 shrink-0 mt-0.5 ${detail.iconColor}`} />
+                                <div className="min-w-0 flex-1 flex items-center justify-between gap-4">
+                                  <div className="truncate">
+                                    <h4 className={`text-sm font-extrabold ${detail.textColor} leading-tight uppercase font-sans`}>
+                                      {detail.label}
+                                    </h4>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+                                      Programa Cardiovascular (PSCV)
+                                    </p>
+                                  </div>
+                                  <span className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-black uppercase font-mono shrink-0 tracking-wider shadow-2xs border border-transparent ${detail.text}`}>
+                                    {dg}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()}
                       </div>
                     </section>
                   </div>

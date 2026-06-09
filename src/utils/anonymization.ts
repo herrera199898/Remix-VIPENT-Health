@@ -82,7 +82,7 @@ export function anonymizePatient(patient: Patient): AnonymizedPatient {
   }
 
   // derive compensation label
-  let compStatus = patient.compensationStatus || 'Sin dato';
+  let compStatus: string = patient.compensationStatus || 'Sin dato';
   if (compStatus !== 'Compensado' && patient.compensationByCondition) {
       const htaComp = patient.compensationByCondition.hta === 'No compensado';
       const dm2Comp = patient.compensationByCondition.dm2 === 'No compensado';

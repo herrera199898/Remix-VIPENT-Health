@@ -1,4 +1,4 @@
-import { LayoutDashboard, CalendarDays, FileText, Users, ChartLine, HeartPulse, Settings, User, ShieldCheck, LogOut, Search } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, FileText, Users, ChartLine, HeartPulse, Settings, User, ShieldCheck, LogOut, Search, Eye } from 'lucide-react';
 import { motion } from 'motion/react';
 import { User as UserType } from '../types';
 
@@ -15,18 +15,23 @@ export default function Sidebar({ currentView, onNavigate, onLogout, currentUser
   if (currentUser?.role === 'Investigador') {
     navItems = [
       { icon: LayoutDashboard, label: 'Dashboard Investigador', id: 'RESEARCH_DASHBOARD' },
-      { icon: FileText, label: 'Datos anonimizados', id: 'ANONYMIZED_DATA' },
-      { icon: Search, label: 'Exportaciones anonimizadas', id: 'ANONYMIZED_DATA' },
+      { icon: Eye, label: 'Datos anonimizados', id: 'ANONYMIZED_DATA' },
+      { icon: FileText, label: 'Reporte REM P4', id: 'REPORTE_REM' },
     ];
   } else {
     navItems = [
       { icon: LayoutDashboard, label: 'Dashboard', id: 'DASHBOARD' },
       { icon: CustomUserHeart, label: 'Pacientes', id: 'PACIENTES' },
       { icon: CalendarDays, label: 'Citas', id: 'MES' },
-      { icon: FileText, label: 'Reporte REM', id: 'REPORTE_REM' },
-      { icon: Users, label: 'Usuarios', id: 'USUARIOS_V2' },
-      { icon: ShieldCheck, label: 'Trazabilidad y auditoría', id: 'AUDIT_LOG' },
+      { icon: FileText, label: 'Reporte REM P4', id: 'REPORTE_REM' },
     ];
+
+    if (currentUser?.role === 'Admin') {
+      navItems.push(
+        { icon: Users, label: 'Usuarios', id: 'USUARIOS_V2' },
+        { icon: ShieldCheck, label: 'Trazabilidad y auditoría', id: 'AUDIT_LOG' }
+      );
+    }
   }
 
   return (

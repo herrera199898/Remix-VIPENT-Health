@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Download, ChevronLeft, ChevronRight, FileText, Eye, X, AlertTriangle, User, Calendar, Activity, Info } from 'lucide-react';
+import { Search, Download, ChevronLeft, ChevronRight, FileText, Eye, X, AlertTriangle, User, Calendar, Activity, Info, CheckCircle, Database } from 'lucide-react';
 import { PATIENTS_MOCK } from '../types';
 import { anonymizePatient, AnonymizedPatient } from '../utils/anonymization';
 
@@ -373,103 +373,202 @@ export default function AnonymizedPatientList({}: AnonymizedPatientListProps) {
       )}
 
       {drawerPatient && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/40 backdrop-blur-sm sm:p-4">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-xl flex flex-col font-sans h-[85vh] sm:h-auto sm:max-h-[85vh] border border-gray-200">
-            <div className="px-5 py-4 border-b border-gray-150 flex justify-between items-start bg-slate-50 rounded-t-2xl">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                    ID Investigativo
-                  </span>
+        <div 
+          className="fixed inset-0 bg-slate-950/70 flex items-center justify-center z-50 p-4 sm:p-6 md:p-10 backdrop-blur-md overflow-hidden animate-fadeIn"
+          onClick={() => setDrawerPatient(null)}
+        >
+          {/* BEGIN: Modal Container */}
+          <div 
+            className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh] animate-scaleUp text-left border border-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* BEGIN: Modal Header */}
+            <header className="flex items-center justify-between p-6 border-b border-gray-200 bg-white shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="bg-purple-50 p-3 rounded-full text-purple-500">
+                  <Database className="w-6 h-6" />
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">{drawerPatient.anonymousId}</h2>
-                <div className="text-xs font-semibold text-gray-500 mt-0.5">
-                   Rango Etario: {drawerPatient.ageRange} | Sexo: {drawerPatient.gender || 'N/E'} | {drawerPatient.establishment || 'N/E'}
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800 tracking-tight uppercase">RESUMEN INVESTIGATIVO</h2>
+                  <p className="text-sm text-slate-500 font-medium">Datos PSCV Anonimizados</p>
                 </div>
               </div>
-              <button onClick={() => setDrawerPatient(null)} className="text-gray-400 hover:text-gray-600 bg-white shadow-xs p-1.5 rounded-full border border-gray-200">
-                <X size={18} />
+              <button 
+                onClick={() => setDrawerPatient(null)}
+                aria-label="Close modal" 
+                className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
               </button>
-            </div>
+            </header>
+            {/* END: Modal Header */}
 
-            <div className="p-5 overflow-y-auto bg-white flex-1 space-y-6">
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 flex items-start gap-2">
-                <AlertTriangle size={14} className="text-amber-600 shrink-0 mt-0.5" />
-                <p>Este resumen no contiene identificadores directos ni permite acceder a la ficha clínica real.</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-1">Estado Clínico</h3>
-                  <div className="font-semibold text-slate-800 text-sm">{drawerPatient.pscvStatus}</div>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-1">Riesgo CV</h3>
-                  <div className="font-semibold text-slate-800 text-sm">{drawerPatient.risk}</div>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 col-span-2">
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-1">Diagnósticos ({drawerPatient.diagnoses.length})</h3>
-                  <div className="font-semibold text-slate-800 text-sm">
-                    {drawerPatient.diagnoses.join(', ') || 'Sin diagnósticos registrados'}
+            {/* BEGIN: Modal Body */}
+            <div className="overflow-y-auto flex-1 p-6">
+              {/* BEGIN: Patient Identifier Card */}
+              <div className="bg-[#0f172a] rounded-xl p-6 text-white shadow-md mb-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-purple-400 uppercase">
+                      <span>Registro Anonimizado</span>
+                    </div>
+                    <h1 className="text-3xl font-extrabold tracking-tight uppercase">{drawerPatient.anonymousId}</h1>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
+                      <p><span className="text-gray-400 font-medium">Edad:</span> <span className="font-bold text-white uppercase">{drawerPatient.ageRange}</span></p>
+                      <p><span className="text-gray-400 font-medium">Sexo:</span> <span className="font-bold text-white uppercase">{drawerPatient.gender || 'N/E'}</span></p>
+                      <p><span className="text-gray-400 font-medium">Diag:</span> <span className="font-bold text-white uppercase">{drawerPatient.diagnoses?.join(' / ') || 'Sin registro'}</span></p>
+                      <p><span className="text-gray-400 font-medium">Centro:</span> <span className="font-bold text-white uppercase">{drawerPatient.establishment || 'N/E'}</span></p>
+                    </div>
                   </div>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 col-span-2">
-                  <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-1">Estado de Compensación</h3>
-                  <div className="font-semibold text-slate-800 text-sm">{drawerPatient.compensationStatus}</div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 mb-3">Seguimiento</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Último Control</span>
-                    <span className="text-xs font-semibold text-slate-800">{drawerPatient.lastControlPeriod}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Próxima Cita</span>
-                    <span className="text-xs font-semibold text-slate-800">
-                      {drawerPatient.nextControlStatus} {drawerPatient.nextControlPeriod ? `(${drawerPatient.nextControlPeriod})` : ''}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-2 md:mt-0">
+                    <span className={`px-3 py-1.5 rounded-md text-xs font-bold bg-[#0f172a] border uppercase tracking-wide flex items-center justify-center ${
+                      drawerPatient.pscvStatus === 'Activo' ? 'border-[#10b981] text-[#10b981]' : 'border-slate-500 text-slate-400'
+                    }`}>
+                      {drawerPatient.pscvStatus}
+                    </span>
+                    <span className={`px-3 py-1.5 rounded-md text-xs font-bold bg-[#0f172a] border uppercase tracking-wide flex items-center justify-center ${
+                      drawerPatient.risk === 'Alto' ? 'border-[#ef4444] text-[#ef4444]' :
+                      drawerPatient.risk === 'Moderado' ? 'border-[#f59e0b] text-[#f59e0b]' :
+                      'border-[#0ea5e9] text-[#0ea5e9]'
+                    }`}>
+                      Riesgo {drawerPatient.risk}
                     </span>
                   </div>
                 </div>
               </div>
+              {/* END: Patient Identifier Card */}
 
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 border-b border-gray-100 pb-2 mb-3">Alertas & Exámenes</h3>
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Exámenes Pendientes</span>
-                    {drawerPatient.pendingExams.length > 0 ? (
-                      <ul className="list-disc ml-4 text-xs font-semibold text-slate-800">
-                        {drawerPatient.pendingExams.map(ex => <li key={ex}>{ex}</li>)}
-                      </ul>
-                    ) : (
-                      <span className="text-xs text-slate-500 font-medium">Ninguno registrado</span>
-                    )}
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Alertas Estructuradas</span>
-                    {drawerPatient.alerts.length > 0 ? (
-                      <ul className="list-disc ml-4 text-xs font-semibold text-rose-700">
-                        {drawerPatient.alerts.map(al => <li key={al}>{al}</li>)}
-                      </ul>
-                    ) : (
-                       <span className="text-xs text-slate-500 font-medium">Sin alertas emitidas</span>
-                    )}
-                  </div>
-                </div>
+              {/* Info Alert */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800 flex items-start gap-3 mb-6 shadow-sm">
+                <AlertTriangle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                <p><strong>Aviso:</strong> Este resumen no contiene identificadores directos ni permite acceder a la ficha clínica real. Uso exclusivo para investigación y análisis estadístico.</p>
               </div>
+
+              {/* BEGIN: Context-Right Utility Layout */}
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* BEGIN: Left Column (Main Clinical Data) */}
+                <div className="flex-1 space-y-6">
+                  {/* Block 1: Estado Clínico */}
+                  <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2 font-sans">
+                      <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                      Estado Compensación
+                    </h3>
+                    <div className="border border-gray-200 rounded-lg p-5 bg-slate-50 flex flex-col justify-between">
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wider">COMPENSACIÓN REGISTRADA</h4>
+                        <div className={`mt-2 font-mono text-xl font-bold uppercase ${
+                          drawerPatient.compensationStatus === 'Compensado' ? 'text-[#10b981]' :
+                          drawerPatient.compensationStatus.toLowerCase().includes('no compensado') ? 'text-[#ef4444]' :
+                          'text-slate-600'
+                        }`}>
+                          {drawerPatient.compensationStatus}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Block 3: Diagnósticos y Vigencias */}
+                  <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2 font-sans">
+                      <span className="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                      Diagnósticos Agrupados
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">DIAGNÓSTICOS ESTRUCTURADOS</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {drawerPatient.diagnoses && drawerPatient.diagnoses.length > 0 ? (
+                            drawerPatient.diagnoses.map((dg, idx) => (
+                              <span key={idx} className="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 shadow-sm uppercase font-mono">
+                                {dg}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-gray-400 italic text-xs">No registra diagnósticos estructurados</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                {/* END: Left Column */}
+
+                {/* BEGIN: Right Column (Utility/Context) */}
+                <div className="w-full lg:w-80 space-y-6 bg-slate-50 p-5 rounded-xl border border-gray-200">
+                  {/* Block 2: Seguimiento */}
+                  <section>
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2 font-sans">
+                      <span className="w-2 h-2 rounded-full bg-[#f59e0b]"></span>
+                      Seguimiento Aproximado
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">ÚLTIMO CONTROL (PERIODO)</h4>
+                        <p className="text-xl font-bold text-gray-800 font-mono">{drawerPatient.lastControlPeriod || 'Sin registro'}</p>
+                      </div>
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <h4 className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">PRÓXIMA CITA (ESTADO)</h4>
+                        <p className={`text-xl font-bold font-mono ${drawerPatient.nextControlStatus === 'Sin próxima cita' || drawerPatient.nextControlStatus === 'Control vencido' ? 'text-[#ef4444]' : 'text-[#10b981]'}`}>
+                          {drawerPatient.nextControlStatus}
+                        </p>
+                        {drawerPatient.nextControlPeriod && (
+                          <p className="text-xs text-gray-500 mt-1 uppercase font-bold">{drawerPatient.nextControlPeriod}</p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Block 4: Alertas */}
+                  <section>
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2 font-sans">
+                      <span className="w-2 h-2 rounded-full bg-[#ef4444]"></span>
+                      Alertas Categorizadas
+                    </h3>
+                    <div className="space-y-3">
+                      {drawerPatient.alerts && drawerPatient.alerts.length > 0 ? (
+                        drawerPatient.alerts.map((al, idx) => (
+                          <div key={idx} className="bg-[#fee2e2] border border-red-200 rounded-lg p-4 flex items-start gap-3 shadow-sm">
+                            <AlertTriangle className="w-5 h-5 text-[#ef4444] mt-0.5 shrink-0" />
+                            <div>
+                              <p className="text-sm font-bold text-[#ef4444] uppercase">{al}</p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="bg-[#d1fae5] border border-emerald-200 rounded-lg p-4 flex items-start gap-3 shadow-sm">
+                          <CheckCircle className="w-5 h-5 text-[#10b981] mt-0.5 shrink-0" />
+                          <div>
+                            <p className="text-sm font-bold text-[#10b981] uppercase">Sin alertas estructuradas</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {drawerPatient.pendingExams && drawerPatient.pendingExams.length > 0 && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex flex-col gap-2 shadow-sm">
+                          <div className="flex items-start gap-2">
+                            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                            <span className="text-[11px] font-black uppercase text-amber-700 tracking-wider">EXÁMENES PENDIENTES</span>
+                          </div>
+                          <div className="space-y-1.5 pl-7">
+                            {drawerPatient.pendingExams.map((exam, idx) => (
+                              <div key={idx} className="text-xs text-amber-900 font-bold flex items-center gap-2 uppercase">
+                                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                <span>{exam}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                </div>
+                {/* END: Right Column */}
+              </div>
+              {/* END: Context-Right Utility Layout */}
             </div>
-            <div className="px-5 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl flex justify-between items-center shrink-0">
-              <span className="text-[10px] text-gray-500 font-semibold">Uso exclusivo de investigación.</span>
-              <button 
-                onClick={() => setDrawerPatient(null)} 
-                className="px-4 py-2 border border-gray-300 font-bold rounded-lg bg-white text-gray-700 text-sm hover:bg-gray-50"
-              >
-                Cerrar resumen
-              </button>
-            </div>
+            {/* END: Modal Body */}
           </div>
         </div>
       )}

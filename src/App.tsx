@@ -442,9 +442,18 @@ export default function App() {
   const handleViewChange = (newView: any, params?: any) => {
     // Restricted access for Investigator
     if (currentUser?.role === 'Investigador') {
-      const allowedViews = ['RESEARCH_DASHBOARD', 'USER_PROFILE', 'ANONYMIZED_DATA'];
+      const allowedViews = ['RESEARCH_DASHBOARD', 'USER_PROFILE', 'ANONYMIZED_DATA', 'REPORTE_REM'];
       if (!allowedViews.includes(newView)) {
         setView('RESEARCH_DASHBOARD');
+        return;
+      }
+    }
+
+    // Restricted access for clinical (non-Admin) profiles to accounts and audit logs
+    if (currentUser?.role !== 'Admin' && currentUser?.role !== 'Investigador') {
+      const forbiddenViews = ['USUARIOS', 'USUARIOS_V2', 'AUDIT_LOG'];
+      if (forbiddenViews.includes(newView)) {
+        setView('DASHBOARD');
         return;
       }
     }
@@ -558,7 +567,7 @@ export default function App() {
                           transition={{ duration: 0.3 }}
                           className="flex-1 flex flex-col min-h-0"
                         >
-                          <WeekView appointments={appointmentsList} currentDate={currentDate} selectedDateStr={selectedDate} onDaySelect={handleFullDateSelect} />
+                          <WeekView appointments={appointmentsList} currentDate={currentDate} selectedDateStr={selectedDate} onDaySelect={handleFullDateSelect} onManageAppointment={handleOpenManagementModal} />
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -647,6 +656,7 @@ export default function App() {
                   className="flex-1 flex flex-col min-h-0"
                 >
                   <Dashboard 
+                    currentUser={currentUser}
                     onNavigateToCalendar={handleNavigateToCalendar} 
                     onNavigate={handleViewChange}
                     onNewAppointment={() => {
@@ -665,7 +675,7 @@ export default function App() {
                   exit={{ opacity: 0 }}
                   className="flex-1 flex flex-col min-h-0"
                 >
-                  <ResearchDashboard />
+                  <ResearchDashboard onNavigate={handleViewChange} />
                 </motion.div>
               )}
               {view === 'ANONYMIZED_DATA' && (

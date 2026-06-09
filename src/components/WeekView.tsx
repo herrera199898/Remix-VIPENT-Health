@@ -1,13 +1,15 @@
 import { Appointment, ProfessionalRole } from '../types';
+import { Pencil } from 'lucide-react';
 
 interface WeekViewProps {
   appointments: Appointment[];
   currentDate: Date;
   selectedDateStr?: string | null;
   onDaySelect?: (dateStr: string) => void;
+  onManageAppointment?: (appId: string) => void;
 }
 
-export default function WeekView({ appointments, currentDate, selectedDateStr, onDaySelect }: WeekViewProps) {
+export default function WeekView({ appointments, currentDate, selectedDateStr, onDaySelect, onManageAppointment }: WeekViewProps) {
   const getDaysOfWeek = (date: Date) => {
     const startOfWeek = new Date(date);
     startOfWeek.setDate(date.getDate() - date.getDay()); // Sunday
@@ -148,7 +150,7 @@ export default function WeekView({ appointments, currentDate, selectedDateStr, o
                       return (
                           <div
                             key={app.id}
-                            className={`absolute left-1.5 right-1.5 p-2 px-3 rounded-md shadow-sm transition-all hover:shadow-md cursor-pointer ${colors.bg} ${colors.border}`}
+                            className={`absolute left-1.5 right-1.5 p-2 px-3 pr-6 rounded-md shadow-sm transition-all hover:shadow-md cursor-pointer ${colors.bg} ${colors.border}`}
                             style={{
                               top: `${timeIdx * 80 + 4}px`,
                               height: '72px',
@@ -159,11 +161,25 @@ export default function WeekView({ appointments, currentDate, selectedDateStr, o
                               onDaySelect?.(day.dateStr);
                             }}
                           >
-                            <div className={`text-[9px] font-bold uppercase mb-0.5 tracking-tight ${colors.roleText}`}>
-                              {app.role}
-                            </div>
-                            <div className={`text-[10px] font-black uppercase leading-tight break-words ${colors.text}`}>
-                              {app.professionalName}
+                            <div className="relative h-full">
+                              <div className={`text-[9px] font-bold uppercase mb-0.5 tracking-tight ${colors.roleText}`}>
+                                {app.role}
+                              </div>
+                              <div className={`text-[10px] font-black uppercase leading-tight break-words pr-2 ${colors.text}`}>
+                                {app.professionalName}
+                              </div>
+                              {onManageAppointment && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onManageAppointment(app.id);
+                                  }}
+                                  className="absolute -top-0.5 -right-1.5 p-1 rounded-full text-slate-400 hover:text-brand-blue hover:bg-black/5 transition-colors cursor-pointer flex items-center justify-center"
+                                  title="Editar / Gestionar Cita"
+                                >
+                                  <Pencil size={11} />
+                                </button>
+                              )}
                             </div>
                           </div>
                       );
